@@ -18,7 +18,6 @@ def scrape_stats(day, output_file='stats_data.csv'):
     url = f'https://thrice.geekswhodrink.com/stats?day={day}'
 
     with sync_playwright() as p:
-        # Launch the browser in headless mode
         browser = p.chromium.launch(headless=True)
         context = browser.new_context()
         
@@ -29,11 +28,9 @@ def scrape_stats(day, output_file='stats_data.csv'):
                           'Chrome/58.0.3029.110 Safari/537.3'
         })
 
-        # Open a new page
         page = context.new_page()
 
         try:
-            # Navigate to the URL
             print(f'Navigating to {url}...')
             page.goto(url, timeout=60000)  # Timeout after 60 seconds
 
@@ -48,14 +45,21 @@ def scrape_stats(day, output_file='stats_data.csv'):
                 print("Selection not found on the page.")
                 return
 
-            # Extract selection headers
-            headers = [header.inner_text().strip() for header in selection.query_selector_all('div')]
+            # Extract answers. 
+            headers = [header.inner_text().strip() for header in selection.query_selector_all('[data-dropdown-index-param]')]
+            print("----HEADERS----")
             print(headers)
+
+            # Extract questions.
+            print("----QUESTIONS----")
+            questions = [question.inner_text().strip() for question in selection.query_selector_all("//*[contains(text(), '?')]")]
+            print(questions)
 
             # Extract table rows, skipping header row
             rows = selection.query_selector_all('div')[1:]
 
             element = page.query_selector("//*[contains(text(), 'Submit')]")
+            print("----ELEMENT----")
             print(element)
 
             data = []
