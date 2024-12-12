@@ -1,54 +1,80 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trivia Game</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thrice is Nice</title>
     <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 h-screen flex flex-col items-center justify-center">
+  </head>
+  <body class="bg-gray-100 h-screen flex flex-col items-center justify-center">
     <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
-        <h1 class="text-xl font-bold mb-4">Trivia Game</h1>
-        <div id="question" class="mb-4 text-lg font-medium">Loading question...</div>
-        <div id="options" class="space-y-2">
-            <!-- Options will be injected dynamically -->
-        </div>
-        <button id="next" class="mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600">Next</button>
+      <h1 class="text-xl font-bold mb-2">Thrice</h1>
+      <h2
+        id="category"
+        class="w-full bg-yellow-500 text-white py-2 px-2 mb-4 rounded"
+      >
+        Category: ...
+      </h2>
+      <div id="question" class="mb-4 text-lg font-medium">
+        Loading question...
+      </div>
+      <div id="options" class="space-y-2">
+        <!-- Options will be injected dynamically -->
+      </div>
+      <input
+        id="answer"
+        type="text"
+        class="w-full border rounded py-2 px-4 mb-4 mt-4"
+        placeholder="Answer..."
+      />
+      <button
+        id="submit"
+        class="w-full bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
+      >
+        Submit answer
+      </button>
+      <button
+        id="next"
+        class="mt-4 w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+      >
+        Next question
+      </button>
     </div>
 
     <script>
-        let currentQuestion = 0;
-        let questions = [];
+      let currentQuestion = 0;
+      let questions = [];
 
-        // Fetch questions from server
-        fetch('/api/questions')
-            .then(response => response.json())
-            .then(data => {
-                questions = data;
-                displayQuestion();
-            });
+      // Fetch questions from server
+      fetch("/api/questions")
+        .then((response) => response.json())
+        .then((data) => {
+          questions = data;
+          displayQuestion();
+        });
 
-        function displayQuestion() {
-            const question = questions[currentQuestion];
-            document.getElementById('question').innerText = question.question;
-            const optionsDiv = document.getElementById('options');
-            optionsDiv.innerHTML = '';
+      function displayQuestion() {
+        const question = questions[currentQuestion];
+        document.getElementById("question").innerText = question.question;
+        const optionsDiv = document.getElementById("options");
+        optionsDiv.innerHTML = "";
 
-            question.options.forEach(option => {
-                const button = document.createElement('button');
-                button.innerText = option;
-                button.className = 'w-full bg-gray-200 py-2 px-4 rounded hover:bg-gray-300';
-                button.onclick = () => {
-                    alert(option === question.answer ? 'Correct!' : 'Wrong!');
-                };
-                optionsDiv.appendChild(button);
-            });
-        }
+        question.options.forEach((option) => {
+          const button = document.createElement("button");
+          button.innerText = option;
+          button.className =
+            "w-full bg-gray-200 py-2 px-4 rounded hover:bg-gray-300";
+          button.onclick = () => {
+            alert(option === question.answer ? "Correct!" : "Wrong!");
+          };
+          optionsDiv.appendChild(button);
+        });
+      }
 
-        document.getElementById('next').onclick = () => {
-            currentQuestion = (currentQuestion + 1) % questions.length;
-            displayQuestion();
-        };
+      document.getElementById("next").onclick = () => {
+        currentQuestion = (currentQuestion + 1) % questions.length;
+        displayQuestion();
+      };
     </script>
-</body>
+  </body>
 </html>
