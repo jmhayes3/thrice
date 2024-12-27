@@ -1,8 +1,3 @@
-// User Interface for a Thricegame.com Style Trivia Game using Tailwind CSS and Node.js
-
-// Install necessary dependencies
-// npm install express tailwindcss autoprefixer postcss nodemon
-
 const express = require('express');
 const app = express();
 const path = require('path');
