@@ -3,59 +3,90 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Thrice is Nice</title>
+    <title>Thrice</title>
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
   <body
-    class="bg-yellow-50 dark:bg-gray-800 h-full flex flex-col items-center justify-center"
+    class="bg-gray-100 dark:bg-gray-900 h-full flex flex-col items-center justify-center"
   >
-    <div class="bg-white my-4 p-6 rounded-lg shadow-md w-full max-w-md">
-      <h1
-        class="bg-gray-800 text-white py-6 px-2 text-5xl font-bold rounded-t-xl flex flex-col items-center"
-      >
-        thrice
-      </h1>
-      <h2
-        id="category"
-        class="w-full bg-amber-400 text-lg font-bold py-2 px-2 rounded-b-xl flex flex-col items-center"
-      >
-        CATEGORY: Food & Drink
-      </h2>
-      <h4
-        class="my-2 py-2 px-2 text-3xl font-bold text-black flex flex-col items-center"
-      >
-        Question 1<span class="text-lg text-gray-500">FOR 3 POINTS</span>
-      </h4>
-
-      <div id="question" class="py-2 px-2 text-lg text-center">
-        Loading question...
-      </div>
-      <div id="options" class="space-y-2">
-        <!-- Options will be injected dynamically -->
-      </div>
-      <input
-        id="answer"
-        type="text"
-        class="w-full border rounded-xl py-4 px-4 my-4"
-        placeholder="Answer here..."
-      />
-      <button
-        id="submit"
-        class="w-full text-md text-white font-medium my-2 bg-amber-500 py-4 px-4 rounded-xl hover:bg-amber-600"
-      >
-        Submit
-      </button>
-      <p
-        id="footer"
-        class="text-md flex flex-col items-center w-full py-2 px-2"
-      >
-        I don't know,
-        <span
-          id="next"
-          class="text-md underline font-bold text-amber-500 hover:text-amber-600"
-          >show me the next clue.</span
+    <div
+      id="main"
+      class="bg-white mt-6 py-0 pl-0 pr-0 rounded-lg shadow-sm w-full max-w-md"
+    >
+      <div id="header" class="bg-gray-800 w-full h-full rounded-lg">
+        <h1
+          class="bg-gray-800 text-white pt-4 pb-2 text-5xl font-bold rounded-lg flex flex-col items-center"
         >
-      </p>
+          thrice
+        </h1>
+        <h5
+          class="bg-gray-800 pb-2 text-white text-base font-small text-center"
+        >
+          is nice
+        </h5>
+        <h2
+          id="category"
+          class="w-full bg-amber-400 text-black text-lg font-bold py-2 px-2 flex flex-col items-center"
+        >
+          CATEGORY: Food & Drink
+        </h2>
+      </div>
+      <div id="content" class="bg-white mx-4 py-2 px-2 rounded-lg">
+        <h4
+          class="py-2 px-2 text-2xl font-bold text-black flex flex-col items-center"
+        >
+          Question 1<span class="text-sm font-small text-gray-500"
+            >FOR 3 POINTS</span
+          >
+        </h4>
+
+        <div
+          id="question"
+          class="mb-2 py-2 px-2 text-lg text-black font-base text-center"
+        >
+          Loading question...
+        </div>
+        <div id="options" class="space-y-2">
+          <!-- Options will be injected dynamically -->
+        </div>
+        <input
+          id="answer"
+          type="text"
+          class="w-full border border-gray-800 text-lg rounded-lg my-2 py-2 px-2 mx-auto text-center"
+          placeholder="Answer here..."
+        />
+        <button
+          id="submit"
+          class="w-full text-lg text-white font-bold text-center bg-amber-600 my-2 py-2 px-2 mx-auto rounded-lg hover:bg-amber-700"
+        >
+          SUBMIT
+        </button>
+        <div
+          id="footer"
+          class="text-sm font-base flex flex-col items-center w-full py-2 px-2"
+        >
+          I don't know,
+          <a href="#">
+            <span
+              id="next"
+              class="text-sm underline font-base text-orange-500 hover:text-orange-600"
+              >show me the next clue</span
+            >
+          </a>
+          <span id="remaining" class="text-sm font-base">(2 remaining)</span>
+        </div>
+        <br />
+        <div id="clues" class="py-2 px-2 bg-white text-sm text-black font-base">
+          <p id="clue1">
+            <span class="font-bold">CLUE 1: </span>The capitol is Sacramento?
+            <span class="font-bold">YOUR GUESS: </span>Blah
+          </p>
+          <p id="clue2">
+            <span class="font-bold">CLUE 2: </span>The capitol is Sacramento?
+            <span class="font-bold">YOUR GUESS: </span>Bluey
+          </p>
+        </div>
+      </div>
     </div>
 
     <script>
