@@ -21,9 +21,45 @@ const gameData = {
         "Where is the Eiffel Tower located?"
       ]
     },
-    // Add more rounds with different categories but same answer per round
+    {
+      category: "History",
+      answer: "Napoleon",
+      questions: [
+        "Who declared himself Emperor of France in 1804?",
+        "Which French leader was exiled to Elba?",
+        "Who lost the Battle of Waterloo?"
+      ]
+    },
+    {
+      category: "Science",
+      answer: "Water",
+      questions: [
+        "What is H2O commonly known as?",
+        "What substance covers about 71% of the Earth's surface?",
+        "Which liquid is essential for human survival?"
+      ]
+    },
+    {
+      category: "Movies",
+      answer: "Titanic",
+      questions: [
+        "Which movie features a ship hitting an iceberg?",
+        "What film starred Leonardo DiCaprio and Kate Winslet in 1997?",
+        "What is the name of the luxury liner in a James Cameron film?"
+      ]
+    },
+    {
+      category: "Sports",
+      answer: "Soccer",
+      questions: [
+        "Which sport is known as football outside the United States?",
+        "In which sport is a goal scored by kicking the ball?",
+        "Which game has the FIFA World Cup as its main competition?"
+      ]
+    }
   ]
 };
+
 
 // Game session storage
 const gameSessions = new Map();
