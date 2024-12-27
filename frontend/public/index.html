@@ -46,9 +46,6 @@
         >
           Loading question...
         </div>
-        <div id="options" class="space-y-2">
-          <!-- Options will be injected dynamically -->
-        </div>
         <input
           id="answer"
           type="text"
@@ -88,41 +85,17 @@
         </div>
       </div>
     </div>
-
-    <script>
-      let currentQuestion = 0;
-      let questions = [];
-
-      // Fetch questions from server
-      fetch("/api/questions")
-        .then((response) => response.json())
-        .then((data) => {
-          questions = data;
-          displayQuestion();
-        });
-
-      function displayQuestion() {
-        const question = questions[currentQuestion];
-        document.getElementById("question").innerText = question.question;
-        const optionsDiv = document.getElementById("options");
-        optionsDiv.innerHTML = "";
-
-        question.options.forEach((option) => {
-          const button = document.createElement("button");
-          button.innerText = option;
-          button.className =
-            "w-full bg-gray-200 py-2 px-4 rounded hover:bg-gray-300";
-          button.onclick = () => {
-            alert(option === question.answer ? "Correct!" : "Wrong!");
-          };
-          optionsDiv.appendChild(button);
-        });
-      }
-
-      document.getElementById("next").onclick = () => {
-        currentQuestion = (currentQuestion + 1) % questions.length;
-        displayQuestion();
-      };
-    </script>
+    <div id="game-wrapper">
+      <div id="startScreen"></div>
+      <div id="gameScreen"></div>
+      <div id="gameOverScreen"></div>
+      <div id="message"></div>
+      <button id="playAgainButton">Play Again</button>
+      <form id="answerForm">
+        <input id="answerInput" type="text" />
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+    <script src="script.js"></script>
   </body>
 </html>

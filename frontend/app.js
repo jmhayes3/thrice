@@ -1,6 +1,6 @@
 const express = require('express');
 const path = require('path');
-const questionsRoute = require('./routes/questions');
+const gameRoute = require('./routes/game');
 
 const app = express();
 
@@ -8,7 +8,7 @@ const app = express();
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Routes
-app.use('/api/questions', questionsRoute);
+app.use('/api', gameRoute);
 
 // Serve trivia game page
 app.get('/', (req, res) => {

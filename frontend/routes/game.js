@@ -1,13 +1,11 @@
 const express = require('express');
-const bodyParser = require('body-parser');
 const cors = require('cors');
 
-const app = express();
-const port = process.env.PORT || 3000;
+const router = express.Router();
 
 // Middleware
-app.use(cors());
-app.use(bodyParser.json());
+router.use(express.json());
+router.use(cors());
 
 // Data structure for game questions
 const gameData = {
@@ -77,7 +75,7 @@ class GameSession {
 // API Endpoints
 
 // Start new game
-app.post('/api/game/start', (req, res) => {
+router.post('/game/start', (req, res) => {
   const sessionId = Date.now().toString();
   const session = new GameSession();
   gameSessions.set(sessionId, session);
@@ -90,7 +88,7 @@ app.post('/api/game/start', (req, res) => {
 });
 
 // Submit answer
-app.post('/api/game/answer', (req, res) => {
+router.post('/game/answer', (req, res) => {
   const { sessionId, answer } = req.body;
   const session = gameSessions.get(sessionId);
 
@@ -165,7 +163,7 @@ function getQuestion(session) {
 }
 
 // Get game status
-app.get('/api/game/:sessionId/status', (req, res) => {
+router.get('/game/:sessionId/status', (req, res) => {
   const session = gameSessions.get(req.params.sessionId);
 
   if (!session) {
@@ -181,6 +179,8 @@ app.get('/api/game/:sessionId/status', (req, res) => {
 });
 
 // Start the server
-app.listen(port, () => {
-  console.log(`Trivia game server running on port ${port}`);
+router.get('/game/questions', (req, res) => {
+  res.json(gameData);
 });
+
+module.exports = router;
