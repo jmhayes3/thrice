@@ -39,7 +39,6 @@
           Question 1
         </h3>
         <span
-          id="points"
           class="flex flex-col items-center text-base font-bold text-gray-500"
           >FOR 3 POINTS</span
         >
@@ -47,7 +46,7 @@
           id="question"
           class="mb-2 py-2 px-2 text-lg text-black font-base text-center"
         >
-          Loading question...
+          <span>Loading question...</span>
         </div>
         <div
           id="message"
@@ -68,7 +67,7 @@
             Submit
           </button>
         </form>
-        <div id="footer" class="text-base font-base w-full py-2 px-2">
+        <div id="help" class="text-base font-base w-full py-2 px-2">
           I don't know,
           <a
             id="next"
@@ -78,17 +77,12 @@
           >
           <span id="remaining" class="text-base font-base">(2 remaining)</span>
         </div>
-        <div id="clues" class="py-2 px-2 bg-white text-sm text-black font-base">
-          <p id="clue1">
-            <span class="font-bold">CLUE 1: </span>The capitol is Sacramento?
-            <span class="font-bold">YOUR GUESS: </span>Blah
-          </p>
-          <p id="clue2">
-            <span class="font-bold">CLUE 2: </span>The capitol is Sacramento?
-            <span class="font-bold">YOUR GUESS: </span>Bluey
-          </p>
-        </div>
-        <div id="gameOver"></div>
+        <div id="clues" class="py-2 px-2 bg-white text-base text-black font-base"></div>
+        <div id="results" class="py-2 px-2 bg-white text-base text-black font-base">
+          <h4 id="total" class="mb-2 text-2xl text-black font-bold text-center">TOTAL: 10 POINTS</h4>
+          <div id="points" class="mb-2 text-2xl text-black font-bold text-center">
+            2 3 2 1 2
+          </div>
       </div>
     </div>
     <script src="script.js"></script>
