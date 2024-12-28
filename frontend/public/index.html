@@ -7,15 +7,13 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body
-    class="bg-gray-100 dark:bg-gray-900 h-full flex flex-col items-center justify-center"
+    class="bg-yellow-100 dark:bg-gray-900 h-full flex flex-col items-center justify-center"
   >
     <div
       id="main"
       class="bg-white mt-8 py-0 pl-0 pr-0 rounded-lg shadow-sm w-full max-w-md"
     >
-      <div id="intro" class="bg-yellow-100 w-full rounded-lg">
-        <p>hello.</p>
-      </div>
+      <div id="howtoplay" class="bg-yellow-100 w-full rounded-lg"></div>
       <div id="header" class="bg-gray-800 w-full h-full rounded-lg">
         <h1
           class="bg-gray-800 text-white pt-4 pb-2 text-5xl font-bold rounded-lg flex flex-col items-center"
@@ -43,6 +41,10 @@
           >
         </h3>
         <div
+          id="message"
+          class="mb-2 py-2 px-2 text-lg text-block font-base text-center"
+        ></div>
+        <div
           id="question"
           class="mb-2 py-2 px-2 text-lg text-black font-base text-center"
         >
@@ -63,11 +65,7 @@
             Submit
           </button>
         </form>
-        <div id="message"></div>
-        <div
-          id="footer"
-          class="text-base font-base flex flex-col items-center w-full py-2 px-2"
-        >
+        <div id="footer" class="text-base font-base w-full py-2 px-2">
           I don't know,
           <a href="#">
             <span
