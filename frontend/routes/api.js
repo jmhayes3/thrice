@@ -7,7 +7,6 @@ const router = express.Router();
 router.use(express.json());
 router.use(cors());
 
-// Data structure for game questions
 const gameData = {
   rounds: [
     {
@@ -59,7 +58,6 @@ const gameData = {
 };
 
 
-// Game session storage
 const gameSessions = new Map();
 
 class GameSession {
@@ -72,9 +70,6 @@ class GameSession {
   }
 }
 
-// API Endpoints
-
-// Start new game
 router.post('/game/start', (req, res) => {
   const sessionId = Date.now().toString();
   const session = new GameSession();
@@ -87,9 +82,9 @@ router.post('/game/start', (req, res) => {
   });
 });
 
-// Submit answer
 router.post('/game/answer', (req, res) => {
   const { sessionId, answer } = req.body;
+  console.log(sessionId, answer);
   const session = gameSessions.get(sessionId);
 
   if (!session) {
@@ -149,7 +144,6 @@ router.post('/game/answer', (req, res) => {
   });
 });
 
-// Helper function to get current question
 function getQuestion(session) {
   if (session.completed) return null;
 
@@ -162,7 +156,6 @@ function getQuestion(session) {
   };
 }
 
-// Get game status
 router.get('/game/:sessionId/status', (req, res) => {
   const session = gameSessions.get(req.params.sessionId);
 
@@ -178,9 +171,13 @@ router.get('/game/:sessionId/status', (req, res) => {
   });
 });
 
-// Start the server
-router.get('/game/questions', (req, res) => {
+router.get('/questions', (req, res) => {
   res.json(gameData);
+});
+
+router.get('/stats', (req, res) => {
+  const statsData = {};
+  res.json(statsData);
 });
 
 module.exports = router;
