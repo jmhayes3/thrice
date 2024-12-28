@@ -57,7 +57,6 @@ const gameData = {
   ]
 };
 
-
 const gameSessions = new Map();
 
 class GameSession {

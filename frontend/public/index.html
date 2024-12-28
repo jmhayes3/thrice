@@ -36,20 +36,23 @@
         <h3
           class="py-2 px-2 text-2xl text-gray-800 font-bold text-black flex flex-col items-center"
         >
-          Question 1<span class="text-sm font-small text-gray-500"
-            >FOR 3 POINTS</span
-          >
+          Question 1
         </h3>
-        <div
-          id="message"
-          class="mb-2 py-2 px-2 text-lg text-block font-base text-center"
-        ></div>
+        <span
+          id="points"
+          class="flex flex-col items-center text-base font-bold text-gray-500"
+          >FOR 3 POINTS</span
+        >
         <div
           id="question"
           class="mb-2 py-2 px-2 text-lg text-black font-base text-center"
         >
           Loading question...
         </div>
+        <div
+          id="message"
+          class="mb-2 py-2 px-2 text-lg text-block font-base text-center"
+        ></div>
         <form id="answerForm">
           <input
             id="answerInput"
@@ -67,13 +70,12 @@
         </form>
         <div id="footer" class="text-base font-base w-full py-2 px-2">
           I don't know,
-          <a href="#">
-            <span
-              id="next"
-              class="text-base underline font-base text-sky-700 hover:text-sky-800"
-              >show me the next clue</span
-            >
-          </a>
+          <a
+            id="next"
+            href="#"
+            class="text-base underline font-base text-rose-700 hover:text-rose-800"
+            >show me the next clue</a
+          >
           <span id="remaining" class="text-base font-base">(2 remaining)</span>
         </div>
         <div id="clues" class="py-2 px-2 bg-white text-sm text-black font-base">
