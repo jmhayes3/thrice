@@ -13,6 +13,9 @@
       id="main"
       class="bg-white mt-8 py-0 pl-0 pr-0 rounded-lg shadow-sm w-full max-w-md"
     >
+      <div id="intro" class="bg-yellow-100 w-full rounded-lg">
+        <p>hello.</p>
+      </div>
       <div id="header" class="bg-gray-800 w-full h-full rounded-lg">
         <h1
           class="bg-gray-800 text-white pt-4 pb-2 text-5xl font-bold rounded-lg flex flex-col items-center"
@@ -39,25 +42,28 @@
             >FOR 3 POINTS</span
           >
         </h3>
-
         <div
           id="question"
           class="mb-2 py-2 px-2 text-lg text-black font-base text-center"
         >
           Loading question...
         </div>
-        <input
-          id="answer"
-          type="text"
-          class="w-full border border-gray-800 text-lg rounded-lg my-2 py-2 px-2 mx-auto text-center"
-          placeholder="Answer here..."
-        />
-        <button
-          id="submit"
-          class="w-full text-lg text-gray-800 font-bold text-center bg-amber-400 my-2 py-2 px-2 mx-auto rounded-lg hover:bg-amber-500"
-        >
-          Submit
-        </button>
+        <form id="answerForm">
+          <input
+            id="answerInput"
+            type="text"
+            class="w-full border border-gray-800 text-lg rounded-lg my-2 py-2 px-2 mx-auto text-center"
+            placeholder="Answer here..."
+          />
+          <button
+            id="submit"
+            type="submit"
+            class="w-full text-lg text-gray-800 font-bold text-center bg-amber-400 my-2 py-2 px-2 mx-auto rounded-lg hover:bg-amber-500"
+          >
+            Submit
+          </button>
+        </form>
+        <div id="message"></div>
         <div
           id="footer"
           class="text-base font-base flex flex-col items-center w-full py-2 px-2"
@@ -82,18 +88,8 @@
             <span class="font-bold">YOUR GUESS: </span>Bluey
           </p>
         </div>
+        <div id="gameOver"></div>
       </div>
-    </div>
-    <div id="game-wrapper">
-      <div id="startScreen"></div>
-      <div id="gameScreen"></div>
-      <div id="gameOverScreen"></div>
-      <div id="message"></div>
-      <button id="playAgainButton">Play Again</button>
-      <form id="answerForm">
-        <input id="answerInput" type="text" />
-        <button type="submit">Submit</button>
-      </form>
     </div>
     <script src="script.js"></script>
   </body>

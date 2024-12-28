@@ -97,47 +97,39 @@ router.post('/game/answer', (req, res) => {
 
   const currentRound = gameData.rounds[session.currentRound];
   const isCorrect = answer.toLowerCase() === currentRound.answer.toLowerCase();
-  let points = 0;
+  const maxPoints = 3;
   let message = "";
 
   if (isCorrect) {
-    // Calculate points based on attempts
-    switch (session.attempts) {
-      case 0: points = 3; break;
-      case 1: points = 2; break;
-      case 2: points = 1; break;
-      default: points = 0;
-    }
-
-    session.score += points;
-    session.attempts = 0;
-    session.currentQuestion++;
-
-    // Check if round is complete
-    if (session.currentQuestion >= 3) {
+    if (session.currentQuestion <= 3) {
+      // Score can be inferred from the current question.
+      session.score += (maxPoints - session.currentQuestion);
+      // Reset question counter to 0 and continue to next round.
       session.currentQuestion = 0;
       session.currentRound++;
-
-      // Check if game is complete
-      if (session.currentRound >= 5) {
-        session.completed = true;
-        return res.json({
-          correct: true,
-          points,
-          totalScore: session.score,
-          message: "Game completed!",
-          gameOver: true
-        });
-      }
+      message = "Correct!"
     }
   } else {
     session.attempts++;
+    session.currentQuestion++;
     message = "Incorrect answer, try again";
+  }
+
+  // Check if game is complete
+  if (session.currentRound >= 5) {
+    session.completed = true;
+    return res.json({
+      correct: isCorrect,
+      totalScore: session.score,
+      nextQuestion: getQuestion(session),
+      gameOver: true,
+      message: "Game over!"
+    })
   }
 
   res.json({
     correct: isCorrect,
-    points,
+    remaining: maxPoints - session.currentQuestion,
     totalScore: session.score,
     nextQuestion: getQuestion(session),
     message

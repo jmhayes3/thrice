@@ -5,9 +5,9 @@ class TriviaGame {
     this.currentQuestion = null;
 
     // DOM Elements
-    this.startScreen = document.getElementById('startScreen');
-    this.gameScreen = document.getElementById('gameScreen');
-    this.gameOverScreen = document.getElementById('gameOverScreen');
+    this.startScreen = document.getElementById('intro');
+    this.gameScreen = document.getElementById('content');
+    this.gameOverScreen = document.getElementById('gameOver');
     this.messageElement = document.getElementById('message');
     this.scoreElement = document.getElementById('score');
     this.questionElement = document.getElementById('question');
