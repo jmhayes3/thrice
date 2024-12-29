@@ -1,10 +1,9 @@
-<!-- index.html -->
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Brain Gymnastics</title>
+    <title>Brain Gymnastics & Thrice</title>
     <!-- Add Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Configure some custom Tailwind theme values -->
@@ -17,6 +16,7 @@
               secondary: "#00ccff",
               "bg-dark": "#1a1a2e",
               "bg-light": "#16213e",
+              amber: "#ffc107",
             },
             animation: {
               "fade-in": "fadeIn 0.5s ease-in-out",
@@ -31,19 +31,28 @@
         },
       };
     </script>
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body
-    class="min-h-screen bg-gradient-to-br from-bg-dark to-bg-light text-white"
+    class="min-h-screen bg-gradient-to-br from-bg-dark to-bg-light text-white flex flex-col items-center justify-center"
   >
     <div class="container max-w-3xl mx-auto px-4 py-8">
+      <!-- Shared Header -->
       <header class="text-center mb-8">
         <h1
           class="text-4xl md:text-5xl font-bold text-primary drop-shadow-[0_0_10px_rgba(0,255,136,0.5)]"
         >
-          🧠 Brain Gymnastics 🏋️‍♂️
+          🧠 Brain Gymnastics & Thrice 🏋️‍♂️
         </h1>
+        <h2
+          id="category"
+          class="w-full bg-amber-400 text-gray-800 text-lg font-bold py-2 px-2 rounded-lg mt-4"
+        >
+          CATEGORY: Food & Drink
+        </h2>
       </header>
 
+      <!-- Main Game Area -->
       <main id="gameArea">
         <!-- Initial state - Start button -->
         <div
@@ -83,7 +92,9 @@
           </div>
 
           <div class="question-box bg-black/30 p-8 rounded-lg mt-4">
-            <p id="questionText" class="question text-xl mb-6"></p>
+            <p id="questionText" class="question text-xl mb-6">
+              Loading question...
+            </p>
             <form id="answerForm" class="flex flex-col items-center gap-4">
               <input
                 type="text"
@@ -99,6 +110,21 @@
                 Submit Answer
               </button>
             </form>
+            <div
+              id="help"
+              class="text-base font-base w-full py-2 px-2 text-white mt-4"
+            >
+              I don't know,
+              <a
+                id="next"
+                href="#"
+                class="text-base underline font-base text-rose-700 hover:text-rose-800"
+                >show me the next clue</a
+              >
+              <span id="remaining" class="text-base font-base"
+                >(2 remaining)</span
+              >
+            </div>
           </div>
         </div>
 
@@ -120,10 +146,18 @@
         </div>
       </main>
 
+      <!-- Results Section -->
       <div
-        id="message"
-        class="message hidden animate-fade-in text-center p-4 mt-4 rounded-lg bg-white/10"
-      ></div>
+        id="results"
+        class="hidden py-2 px-2 bg-white text-base text-black font-base rounded-lg mt-4"
+      >
+        <h4 id="total" class="mb-2 text-2xl text-black font-bold text-center">
+          TOTAL: 10 POINTS
+        </h4>
+        <div id="points" class="mb-2 text-2xl text-black font-bold text-center">
+          2 3 2 1 2
+        </div>
+      </div>
     </div>
     <script src="script.js"></script>
   </body>
