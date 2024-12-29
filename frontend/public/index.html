@@ -1,89 +1,129 @@
+<!-- index.html -->
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Thrice</title>
-    <link rel="stylesheet" href="styles.css" />
+    <title>Brain Gymnastics</title>
+    <!-- Add Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Configure some custom Tailwind theme values -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#00ff88",
+              secondary: "#00ccff",
+              "bg-dark": "#1a1a2e",
+              "bg-light": "#16213e",
+            },
+            animation: {
+              "fade-in": "fadeIn 0.5s ease-in-out",
+            },
+            keyframes: {
+              fadeIn: {
+                "0%": { opacity: "0" },
+                "100%": { opacity: "1" },
+              },
+            },
+          },
+        },
+      };
+    </script>
   </head>
   <body
-    class="bg-yellow-100 dark:bg-gray-900 h-full flex flex-col items-center justify-center"
+    class="min-h-screen bg-gradient-to-br from-bg-dark to-bg-light text-white"
   >
-    <div
-      id="main"
-      class="bg-white mt-8 py-0 pl-0 pr-0 rounded-lg shadow-sm w-full max-w-fit"
-    >
-      <div id="howtoplay" class="bg-yellow-100 w-full rounded-lg"></div>
-      <div id="header" class="bg-gray-800 w-full h-full rounded-lg">
+    <div class="container max-w-3xl mx-auto px-4 py-8">
+      <header class="text-center mb-8">
         <h1
-          class="bg-gray-800 text-white pt-4 pb-2 text-5xl font-bold rounded-lg flex flex-col items-center"
+          class="text-4xl md:text-5xl font-bold text-primary drop-shadow-[0_0_10px_rgba(0,255,136,0.5)]"
         >
-          thrice
+          🧠 Brain Gymnastics 🏋️‍♂️
         </h1>
+      </header>
+
+      <main id="gameArea">
+        <!-- Initial state - Start button -->
         <div
-          class="bg-gray-800 pb-2 text-white text-base font-small text-center"
+          id="startScreen"
+          class="screen bg-white/10 rounded-2xl p-8 mb-4 text-center"
         >
-          is nice
-        </div>
-        <h2
-          id="category"
-          class="w-full bg-amber-400 text-gray-800 text-lg font-bold py-2 px-2 flex flex-col items-center"
-        >
-          CATEGORY: Food & Drink
-        </h2>
-      </div>
-      <div id="content" class="bg-white mx-4 py-2 px-2 rounded-lg">
-        <h3
-          class="py-2 px-2 text-2xl text-gray-800 font-bold text-black flex flex-col items-center"
-        >
-          Question 1
-        </h3>
-        <span
-          class="flex flex-col items-center text-base font-bold text-gray-500"
-          >FOR 3 POINTS</span
-        >
-        <div
-          id="question"
-          class="mb-2 py-2 px-2 text-lg text-black font-base text-center"
-        >
-          <span>Loading question...</span>
-        </div>
-        <div
-          id="message"
-          class="mb-2 py-2 px-2 text-lg text-block font-base text-center"
-        ></div>
-        <form id="answerForm">
-          <input
-            id="answerInput"
-            type="text"
-            class="w-full border border-gray-800 text-lg rounded-lg my-2 py-2 px-2 mx-auto text-center"
-            placeholder="Answer here..."
-          />
           <button
-            id="submit"
-            type="submit"
-            class="w-full text-lg text-gray-800 font-bold text-center bg-amber-400 my-2 py-2 px-2 mx-auto rounded-lg hover:bg-amber-500"
+            id="startButton"
+            class="btn bg-primary text-bg-dark px-6 py-3 rounded-lg text-lg font-semibold hover:bg-[#00cc6f] transform hover:-translate-y-0.5 transition-all duration-300"
           >
-            Submit
+            Start New Game
           </button>
-        </form>
-        <div id="help" class="text-base font-base w-full py-2 px-2">
-          I don't know,
-          <a
-            id="next"
-            href="#"
-            class="text-base underline font-base text-rose-700 hover:text-rose-800"
-            >show me the next clue</a
-          >
-          <span id="remaining" class="text-base font-base">(2 remaining)</span>
         </div>
-        <div id="clues" class="py-2 px-2 bg-white text-base text-black font-base"></div>
-        <div id="results" class="py-2 px-2 bg-white text-base text-black font-base">
-          <h4 id="total" class="mb-2 text-2xl text-black font-bold text-center">TOTAL: 10 POINTS</h4>
-          <div id="points" class="mb-2 text-2xl text-black font-bold text-center">
-            2 3 2 1 2
+
+        <!-- Game screen -->
+        <div
+          id="gameScreen"
+          class="screen hidden bg-white/10 rounded-2xl p-8 mb-4"
+        >
+          <div
+            class="game-info flex justify-between items-start flex-col md:flex-row gap-4 mb-8"
+          >
+            <div class="progress-info">
+              <h2 class="text-2xl font-bold text-primary mb-2">
+                Round <span id="roundNumber">1</span> of 5
+              </h2>
+              <h3 class="text-xl font-semibold text-secondary mb-2">
+                Category: <span id="category"></span>
+              </h3>
+              <p class="text-lg">
+                Question <span id="questionNumber">1</span> of 3
+              </p>
+            </div>
+            <div class="score-display text-xl font-bold text-primary">
+              Score: <span id="score">0</span>
+            </div>
           </div>
-      </div>
+
+          <div class="question-box bg-black/30 p-8 rounded-lg mt-4">
+            <p id="questionText" class="question text-xl mb-6"></p>
+            <form id="answerForm" class="flex flex-col items-center gap-4">
+              <input
+                type="text"
+                id="answerInput"
+                placeholder="Enter your answer..."
+                class="w-4/5 px-4 py-3 rounded-lg bg-white/90 text-bg-dark focus:outline-none focus:ring-2 focus:ring-primary"
+                autocomplete="off"
+              />
+              <button
+                type="submit"
+                class="btn bg-primary text-bg-dark px-6 py-3 rounded-lg font-semibold hover:bg-[#00cc6f] transform hover:-translate-y-0.5 transition-all duration-300"
+              >
+                Submit Answer
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- Game over screen -->
+        <div
+          id="gameOverScreen"
+          class="screen hidden bg-white/10 rounded-2xl p-8 mb-4 text-center"
+        >
+          <h2 class="text-3xl font-bold text-primary mb-4">Game Over!</h2>
+          <p class="text-xl mb-6">
+            Final Score: <span id="finalScore">0</span>
+          </p>
+          <button
+            id="playAgainButton"
+            class="btn bg-primary text-bg-dark px-6 py-3 rounded-lg font-semibold hover:bg-[#00cc6f] transform hover:-translate-y-0.5 transition-all duration-300"
+          >
+            Play Again
+          </button>
+        </div>
+      </main>
+
+      <div
+        id="message"
+        class="message hidden animate-fade-in text-center p-4 mt-4 rounded-lg bg-white/10"
+      ></div>
     </div>
     <script src="script.js"></script>
   </body>
