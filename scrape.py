@@ -15,9 +15,12 @@ def scrape_stats(day, output_file='stats_data.csv'):
     Returns:
         None
     """
+    print(f"Starting scrape_stats with day={day} and output_file={output_file}")
     url = f'https://thrice.geekswhodrink.com/stats?day={day}'
+    print(f"Constructed URL: {url}")
 
     with sync_playwright() as p:
+        print("Launching Playwright...")
         browser = p.chromium.launch(headless=True)
         context = browser.new_context()
         
@@ -27,19 +30,22 @@ def scrape_stats(day, output_file='stats_data.csv'):
                           'AppleWebKit/537.36 (KHTML, like Gecko) ' +
                           'Chrome/58.0.3029.110 Safari/537.3'
         })
+        print("Browser context configured with user-agent.")
 
         page = context.new_page()
 
         try:
             print(f'Navigating to {url}...')
             page.goto(url, timeout=60000)  # Timeout after 60 seconds
+            print("Page loaded successfully.")
 
             # Wait for the main content to load
-            # Adjust the selector based on the actual page structure
-            # For example, wait for a table to appear
+            print("Waiting for the main content to load...")
             page.wait_for_selector('#day-view', timeout=60000)  # Wait up to 60 seconds
+            print("Selector #day-view found.")
 
             # Extract data.
+            print("Extracting data...")
             selection = page.query_selector('#day-view')
             if not selection:
                 print("Selection not found on the page.")
@@ -57,16 +63,18 @@ def scrape_stats(day, output_file='stats_data.csv'):
 
             # Extract table rows, skipping header row
             rows = selection.query_selector_all('div')[1:]
+            print(f"Found {len(rows)} rows in the table.")
 
             element = page.query_selector("//*[contains(text(), 'Submit')]")
             print("----ELEMENT----")
             print(element)
 
             data = []
-            for row in rows:
+            for idx, row in enumerate(rows):
+                print(f"Processing row {idx}...")
                 cells = row.query_selector_all('td')
                 if len(cells) != len(headers):
-                    # Skip rows that don't match header length
+                    print(f"Skipping row {idx} due to mismatch in header length.")
                     continue
                 row_data = {headers[i]: cells[i].inner_text().strip() for i in range(len(headers))}
                 data.append(row_data)
@@ -77,6 +85,7 @@ def scrape_stats(day, output_file='stats_data.csv'):
 
             # Save data to CSV
             csv_file = day + '_' + output_file
+            print(f"Saving data to {csv_file}...")
             with open(csv_file, mode='w', newline='', encoding='utf-8') as f:
                 writer = csv.DictWriter(f, fieldnames=headers)
                 writer.writeheader()
@@ -87,6 +96,7 @@ def scrape_stats(day, output_file='stats_data.csv'):
         except Exception as e:
             print(f"An error occurred: {e}", file=sys.stderr)
         finally:
+            print("Closing browser...")
             browser.close()
 
 if __name__ == "__main__":
@@ -99,3 +109,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     scrape_stats(day=args.day, output_file=args.output)
+
