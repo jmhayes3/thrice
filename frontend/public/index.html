@@ -17,14 +17,8 @@
         <h1
           class="text-4xl md:text-5xl font-bold text-primary drop-shadow-[0_0_10px_rgba(0,255,136,0.5)]"
         >
-          🧠 Brain Gymnastics & Thrice 🏋️‍♂️
+          Thrice
         </h1>
-        <h2
-          id="category"
-          class="w-full bg-amber-400 text-gray-800 text-lg font-bold py-2 px-2 rounded-lg mt-4"
-        >
-          CATEGORY: Food & Drink
-        </h2>
       </header>
 
       <!-- Main Game Area -->
@@ -42,40 +36,44 @@
           </button>
         </div>
 
-        <!-- Game screen -->
+        <!-- Message section -->
         <div
-          id="gameScreen"
-          class="screen hidden bg-white/10 rounded-2xl p-8 mb-4"
-        >
+          id="message"
+          class="screen hidden bg-white/10 rounded-2xl p-8 mb-4 text-primary text-base font-bold text-center"
+        ></div>
+
+        <!-- Game screen -->
+        <div id="gameScreen" class="screen hidden bg-white/10 rounded-2xl">
           <div
-            class="game-info flex justify-between items-start flex-col md:flex-row gap-4 mb-8"
+            class="game-info flex justify-between items-center flex-col gap-4"
           >
-            <div class="progress-info">
-              <h2 class="text-2xl font-bold text-primary mb-2">
-                Round <span id="roundNumber">1</span> of 5
+            <div
+              class="category-info flex flex-col justify-center items-center w-full bg-amber text-center rounded-t-2xl"
+            >
+              <h2 class="bg-amber text-black text-xl font-bold px-4 py-2">
+                CATEGORY: <span id="category"></span>
               </h2>
-              <h3 class="text-xl font-semibold text-secondary mb-2">
-                Category: <span id="category"></span>
-              </h3>
-              <p class="text-lg">
-                Question <span id="questionNumber">1</span> of 3
-              </p>
             </div>
-            <div class="score-display text-xl font-bold text-primary">
-              Score: <span id="score">0</span>
+            <div class="progress-info text-center">
+              <h3 class="text-2xl font-bold text-primary">
+                Question <span id="roundNumber">1</span>
+              </h3>
+              <h4 class="text-base font-bold">
+                FOR <span id="questionNumber">3</span> POINTS
+              </h4>
             </div>
           </div>
 
-          <div class="question-box bg-black/30 p-8 rounded-lg mt-4">
-            <p id="questionText" class="question text-xl mb-6">
+          <div class="question-box p-4 mt-4">
+            <p id="questionText" class="question text-xl text-center mb-6">
               Loading question...
             </p>
             <form id="answerForm" class="flex flex-col items-center gap-4">
               <input
                 type="text"
                 id="answerInput"
-                placeholder="Enter your answer..."
-                class="w-4/5 px-4 py-3 rounded-lg bg-white/90 text-bg-dark focus:outline-none focus:ring-2 focus:ring-primary"
+                placeholder="Answer here..."
+                class="w-4/5 px-4 py-3 mx-auto rounded-lg bg-white/90 text-bg-dark focus:outline-none focus:ring-2 focus:ring-primary"
                 autocomplete="off"
               />
               <button
@@ -85,22 +83,17 @@
                 Submit Answer
               </button>
             </form>
-            <div
-              id="help"
-              class="text-base font-base w-full py-2 px-2 text-white mt-4"
-            >
-              I don't know,
-              <a
-                id="next"
-                href="#"
-                class="text-base underline font-base text-rose-700 hover:text-rose-800"
-                >show me the next clue</a
-              >
-              <span id="remaining" class="text-base font-base"
-                >(2 remaining)</span
-              >
-            </div>
           </div>
+        </div>
+
+        <!-- Results Section -->
+        <div
+          id="results"
+          class="mt-2 py-2 px-2 bg-amber text-base text-black font-base rounded-2xl"
+        >
+          <h4 class="mb-2 text-xl text-black font-bold text-center">
+            TOTAL: <span id="score">0</span> POINTS
+          </h4>
         </div>
 
         <!-- Game over screen -->
@@ -120,19 +113,6 @@
           </button>
         </div>
       </main>
-
-      <!-- Results Section -->
-      <div
-        id="results"
-        class="hidden py-2 px-2 bg-white text-base text-black font-base rounded-lg mt-4"
-      >
-        <h4 id="total" class="mb-2 text-2xl text-black font-bold text-center">
-          TOTAL: 10 POINTS
-        </h4>
-        <div id="points" class="mb-2 text-2xl text-black font-bold text-center">
-          2 3 2 1 2
-        </div>
-      </div>
     </div>
     <script src="script.js"></script>
   </body>

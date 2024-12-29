@@ -609,6 +609,10 @@ video {
   margin-bottom: 2rem;
 }
 
+.mt-2 {
+  margin-top: 0.5rem;
+}
+
 .mt-4 {
   margin-top: 1rem;
 }
@@ -645,10 +649,6 @@ video {
   flex-direction: column;
 }
 
-.items-start {
-  align-items: flex-start;
-}
-
 .items-center {
   align-items: center;
 }
@@ -673,18 +673,24 @@ video {
   border-radius: 0.5rem;
 }
 
-.bg-black\/30 {
-  background-color: rgb(0 0 0 / 0.3);
+.rounded-b-2xl {
+  border-bottom-right-radius: 1rem;
+  border-bottom-left-radius: 1rem;
+}
+
+.rounded-t-2xl {
+  border-top-left-radius: 1rem;
+  border-top-right-radius: 1rem;
+}
+
+.bg-amber {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 193 7 / var(--tw-bg-opacity, 1));
 }
 
 .bg-primary {
   --tw-bg-opacity: 1;
-  background-color: rgb(0 255 136 / var(--tw-bg-opacity, 1));
-}
-
-.bg-white {
-  --tw-bg-opacity: 1;
-  background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
+  background-color: rgb(17 153 255 / var(--tw-bg-opacity, 1));
 }
 
 .bg-white\/10 {
@@ -707,6 +713,10 @@ video {
 
 .to-bg-light {
   --tw-gradient-to: #16213e var(--tw-gradient-to-position);
+}
+
+.p-4 {
+  padding: 1rem;
 }
 
 .p-8 {
@@ -795,33 +805,14 @@ video {
   color: rgb(0 0 0 / var(--tw-text-opacity, 1));
 }
 
-.text-gray-800 {
-  --tw-text-opacity: 1;
-  color: rgb(31 41 55 / var(--tw-text-opacity, 1));
-}
-
 .text-primary {
   --tw-text-opacity: 1;
-  color: rgb(0 255 136 / var(--tw-text-opacity, 1));
-}
-
-.text-rose-700 {
-  --tw-text-opacity: 1;
-  color: rgb(190 18 60 / var(--tw-text-opacity, 1));
-}
-
-.text-secondary {
-  --tw-text-opacity: 1;
-  color: rgb(0 204 255 / var(--tw-text-opacity, 1));
+  color: rgb(17 153 255 / var(--tw-text-opacity, 1));
 }
 
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
-}
-
-.underline {
-  text-decoration-line: underline;
 }
 
 .drop-shadow-\[0_0_10px_rgba\(0\2c 255\2c 136\2c 0\.5\)\] {
@@ -849,11 +840,6 @@ video {
   background-color: rgb(0 204 111 / var(--tw-bg-opacity, 1));
 }
 
-.hover\:text-rose-800:hover {
-  --tw-text-opacity: 1;
-  color: rgb(159 18 57 / var(--tw-text-opacity, 1));
-}
-
 .focus\:outline-none:focus {
   outline: 2px solid transparent;
   outline-offset: 2px;
@@ -867,14 +853,10 @@ video {
 
 .focus\:ring-primary:focus {
   --tw-ring-opacity: 1;
-  --tw-ring-color: rgb(0 255 136 / var(--tw-ring-opacity, 1));
+  --tw-ring-color: rgb(17 153 255 / var(--tw-ring-opacity, 1));
 }
 
 @media (min-width: 768px) {
-  .md\:flex-row {
-    flex-direction: row;
-  }
-
   .md\:text-5xl {
     font-size: 3rem;
     line-height: 1;
