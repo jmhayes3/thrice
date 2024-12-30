@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:css": "npx tailwindcss -i ./frontend/src/styles.css -o .frontend/public/styles.css"
+    "build:css": "npx tailwindcss -i ./frontend/src/styles.css -o ./frontend/public/styles.css"
   },
   "keywords": [],
   "author": "jmhayes3",
