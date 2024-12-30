@@ -1,12 +1,16 @@
-from playwright.sync_api import sync_playwright
-
-import csv
+import re
 import sys
 
+from playwright.sync_api import sync_playwright
 
-def scrape_stats(day, output_file='stats_data.csv'):
+
+def extract_questions(text):
+    return text
+
+
+def scrape(day, output_file=None):
     """
-    Scrapes stats from thrice.geekswhodrink.com for a given day using Playwright.
+    Scrapes data from thrice.geekswhodrink.com for a given day using Playwright.
 
     Parameters:
         day (str): Date in 'YYYY-MM-DD' format, e.g., '2024-11-30'
@@ -15,7 +19,7 @@ def scrape_stats(day, output_file='stats_data.csv'):
     Returns:
         None
     """
-    print(f"Starting scrape_stats with day={day} and output_file={output_file}")
+    print(f"Starting scrape with day={day} and output_file={output_file}")
     url = f'https://thrice.geekswhodrink.com/stats?day={day}'
     print(f"Constructed URL: {url}")
 
@@ -51,47 +55,43 @@ def scrape_stats(day, output_file='stats_data.csv'):
                 print("Selection not found on the page.")
                 return
 
-            # Extract answers. 
-            headers = [header.inner_text().strip() for header in selection.query_selector_all('[data-dropdown-index-param]')]
-            print("----HEADERS----")
-            print(headers)
+            rounds = []
 
-            # Extract questions.
-            print("----QUESTIONS----")
-            questions = [question.inner_text().strip() for question in selection.query_selector_all("//*[contains(text(), '?')]")]
-            print(questions)
+            answer1 = [element.inner_text().strip() for element in selection.query_selector_all('[data-dropdown-index-param="0"]')]
+            answer2 = [element.inner_text().strip() for element in selection.query_selector_all('[data-dropdown-index-param="1"]')]
+            answer3 = [element.inner_text().strip() for element in selection.query_selector_all('[data-dropdown-index-param="2"]')]
+            answer4 = [element.inner_text().strip() for element in selection.query_selector_all('[data-dropdown-index-param="3"]')]
+            answer5 = [element.inner_text().strip() for element in selection.query_selector_all('[data-dropdown-index-param="4"]')]
 
-            # Extract table rows, skipping header row
-            rows = selection.query_selector_all('div')[1:]
-            print(f"Found {len(rows)} rows in the table.")
+            rounds.append(dict(answer=answer1[0]))
+            rounds.append(dict(answer=answer2[0]))
+            rounds.append(dict(answer=answer3[0]))
+            rounds.append(dict(answer=answer4[0]))
+            rounds.append(dict(answer=answer5[0]))
 
-            element = page.query_selector("//*[contains(text(), 'Submit')]")
-            print("----ELEMENT----")
-            print(element)
+            round1 = [element.inner_text().strip() for element in selection.query_selector_all('[data-dropdown-target="panel0"]')]
+            round2 = [element.inner_text().strip() for element in selection.query_selector_all('[data-dropdown-target="panel1"]')]
+            round3 = [element.inner_text().strip() for element in selection.query_selector_all('[data-dropdown-target="panel2"]')]
+            round4 = [element.inner_text().strip() for element in selection.query_selector_all('[data-dropdown-target="panel3"]')]
+            round5 = [element.inner_text().strip() for element in selection.query_selector_all('[data-dropdown-target="panel4"]')]
 
-            data = []
-            for idx, row in enumerate(rows):
-                print(f"Processing row {idx}...")
-                cells = row.query_selector_all('td')
-                if len(cells) != len(headers):
-                    print(f"Skipping row {idx} due to mismatch in header length.")
-                    continue
-                row_data = {headers[i]: cells[i].inner_text().strip() for i in range(len(headers))}
-                data.append(row_data)
+            if round1:
+                questions = []
+                text = round1[0]
+                cleaned_text = re.sub(r'[\t\n]+', '', text).strip()
+                items = cleaned_text.split("%")[0:-2]
+                for item in items:
+                    question = item.split("?")[0].strip()
+                    question_str = f"{question}?"
+                    percent = item.split("?")[1].strip()
+                    questions.append(dict(question=question_str, percent_correct=percent))
 
-            if not data:
-                print("No data found in the table.")
-                return
+                print(questions)
 
-            # Save data to CSV
-            csv_file = day + '_' + output_file
-            print(f"Saving data to {csv_file}...")
-            with open(csv_file, mode='w', newline='', encoding='utf-8') as f:
-                writer = csv.DictWriter(f, fieldnames=headers)
-                writer.writeheader()
-                writer.writerows(data)
+            print(rounds)
 
-            print(f"Data successfully written to {csv_file}")
+            if output_file:
+                print("Saving to file...")
 
         except Exception as e:
             print(f"An error occurred: {e}", file=sys.stderr)
@@ -102,11 +102,11 @@ def scrape_stats(day, output_file='stats_data.csv'):
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description='Scrape stats from thrice.geekswhodrink.com')
-    parser.add_argument('--day', type=str, required=True, help="Date in 'YYYY-MM-DD' format, e.g., '2024-11-30'")
-    parser.add_argument('--output', type=str, default='stats_data.csv', help='Output CSV file name')
+    parser = argparse.ArgumentParser(description='Scrape data from thrice.geekswhodrink.com')
+    parser.add_argument('--day', type=str, required=True, help="Date in 'YYYY-MM-DD' format, e.g., '2023-12-04'")
+    parser.add_argument('--output', type=str, required=False, default=None, help='Output CSV file name')
 
     args = parser.parse_args()
 
-    scrape_stats(day=args.day, output_file=args.output)
+    scrape(day=args.day, output_file=args.output)
 
