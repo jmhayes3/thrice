@@ -1,14 +1,14 @@
 {
-  "name": "thrice-frontend",
+  "name": "thrice",
   "version": "1.0.0",
-  "description": "Web UI for Thrice emulator.",
+  "description": "Thrice emulator.",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build:css": "npx tailwindcss -i ./src/styles.css -o ./public/styles.css"
+    "build:css": "npx tailwindcss -i ./frontend/src/styles.css -o .frontend/public/styles.css"
   },
   "keywords": [],
-  "author": "",
+  "author": "jmhayes3",
   "license": "MIT",
   "dependencies": {
     "autoprefixer": "^10.4.20",
