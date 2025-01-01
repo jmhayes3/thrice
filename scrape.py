@@ -4,8 +4,30 @@ import sys
 from playwright.sync_api import sync_playwright
 
 
-def extract_questions(text):
-    return text
+def extract_answers(selection) -> list:
+    answers = []
+    for i in range(5):
+        selector = f'[data-dropdown-index-param="{i}"]'
+        extracted = [element.inner_text().strip() for element in selection.query_selector_all(selector)]
+        if extracted:
+            answers.append(extracted[0])
+    return answers
+
+
+def extract_clues(selection) -> list:
+    clues = []
+    for i in range(5):
+        selector = f'[data-dropdown-target="panel{i}"]'
+        extracted = [element.inner_text().strip() for element in selection.query_selector_all(selector)]
+        if extracted:
+            cleaned_text = re.sub(r'[\t\n]+', '', extracted[0]).strip()
+            items = cleaned_text.split("%")[0:-2]
+            for item in items:
+                question = item.split("?")[0].strip()
+                question_str = f"{question}?"
+                percent = item.split("?")[1].strip()
+                clues.append(dict(question=question_str, percent_correct=percent))
+    return clues
 
 
 def scrape(day, output_file=None):
@@ -28,7 +50,6 @@ def scrape(day, output_file=None):
         browser = p.chromium.launch(headless=True)
         context = browser.new_context()
         
-        # Optional: Set a user agent
         context.set_extra_http_headers({
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) ' +
                           'AppleWebKit/537.36 (KHTML, like Gecko) ' +
@@ -43,52 +64,26 @@ def scrape(day, output_file=None):
             page.goto(url, timeout=60000)  # Timeout after 60 seconds
             print("Page loaded successfully.")
 
-            # Wait for the main content to load
             print("Waiting for the main content to load...")
             page.wait_for_selector('#day-view', timeout=60000)  # Wait up to 60 seconds
             print("Selector #day-view found.")
 
-            # Extract data.
             print("Extracting data...")
             selection = page.query_selector('#day-view')
             if not selection:
                 print("Selection not found on the page.")
                 return
 
-            rounds = []
+            answers = extract_answers(selection)
+            print("ANSWERS\n-------", answers)
 
-            answer1 = [element.inner_text().strip() for element in selection.query_selector_all('[data-dropdown-index-param="0"]')]
-            answer2 = [element.inner_text().strip() for element in selection.query_selector_all('[data-dropdown-index-param="1"]')]
-            answer3 = [element.inner_text().strip() for element in selection.query_selector_all('[data-dropdown-index-param="2"]')]
-            answer4 = [element.inner_text().strip() for element in selection.query_selector_all('[data-dropdown-index-param="3"]')]
-            answer5 = [element.inner_text().strip() for element in selection.query_selector_all('[data-dropdown-index-param="4"]')]
+            clues = extract_clues(selection)
+            print("CLUES\n-------", clues)
 
-            rounds.append(dict(answer=answer1[0]))
-            rounds.append(dict(answer=answer2[0]))
-            rounds.append(dict(answer=answer3[0]))
-            rounds.append(dict(answer=answer4[0]))
-            rounds.append(dict(answer=answer5[0]))
-
-            round1 = [element.inner_text().strip() for element in selection.query_selector_all('[data-dropdown-target="panel0"]')]
-            round2 = [element.inner_text().strip() for element in selection.query_selector_all('[data-dropdown-target="panel1"]')]
-            round3 = [element.inner_text().strip() for element in selection.query_selector_all('[data-dropdown-target="panel2"]')]
-            round4 = [element.inner_text().strip() for element in selection.query_selector_all('[data-dropdown-target="panel3"]')]
-            round5 = [element.inner_text().strip() for element in selection.query_selector_all('[data-dropdown-target="panel4"]')]
-
-            if round1:
-                questions = []
-                text = round1[0]
-                cleaned_text = re.sub(r'[\t\n]+', '', text).strip()
-                items = cleaned_text.split("%")[0:-2]
-                for item in items:
-                    question = item.split("?")[0].strip()
-                    question_str = f"{question}?"
-                    percent = item.split("?")[1].strip()
-                    questions.append(dict(question=question_str, percent_correct=percent))
-
-                print(questions)
-
-            print(rounds)
+            # assert len(answers) == 5
+            # assert len(clues) == 5
+            for clue in clues:
+                print(clue)
 
             if output_file:
                 print("Saving to file...")
