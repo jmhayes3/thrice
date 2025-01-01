@@ -80,8 +80,6 @@ def scrape(day, output_file=None):
             clues = extract_clues(selection)
             print("CLUES\n-------", clues)
 
-            # assert len(answers) == 5
-            # assert len(clues) == 5
             for clue in clues:
                 print(clue)
 
