@@ -4,29 +4,33 @@ import sys
 from playwright.sync_api import sync_playwright
 
 
-def extract_answers(selection) -> list:
-    answers = []
+def extract_game_data(selection) -> dict:
+    game_data = {}
     for i in range(5):
         selector = f'[data-dropdown-index-param="{i}"]'
         extracted = [element.inner_text().strip() for element in selection.query_selector_all(selector)]
         if extracted:
-            answers.append(extracted[0])
-    return answers
+            answer = extracted[0]
+            print(f'Round {i} answer extracted: {answer}')
+            print(f'Extracting clues for round {i} with answer {answer}')
+            clues = extract_clues(selection, i)
+            if clues:
+                game_data[answer] = clues
+    return game_data
 
 
-def extract_clues(selection) -> list:
+def extract_clues(selection, round_number) -> list:
     clues = []
-    for i in range(5):
-        selector = f'[data-dropdown-target="panel{i}"]'
-        extracted = [element.inner_text().strip() for element in selection.query_selector_all(selector)]
-        if extracted:
-            cleaned_text = re.sub(r'[\t\n]+', '', extracted[0]).strip()
-            items = cleaned_text.split("%")[0:-2]
-            for item in items:
-                question = item.split("?")[0].strip()
-                question_str = f"{question}?"
-                percent = item.split("?")[1].strip()
-                clues.append(dict(question=question_str, percent_correct=percent))
+    selector = f'[data-dropdown-target="panel{round_number}"]'
+    extracted = [element.inner_text().strip() for element in selection.query_selector_all(selector)]
+    if extracted:
+        cleaned_text = re.sub(r'[\t\n]+', '', extracted[0]).strip()
+        items = cleaned_text.split("%")[0:-2]
+        for item in items:
+            question = item.split("?")[0].strip()
+            question_str = f"{question}?"
+            percent = item.split("?")[1].strip()
+            clues.append(dict(question=question_str, percent_correct=percent))
     return clues
 
 
@@ -74,14 +78,8 @@ def scrape(day, output_file=None):
                 print("Selection not found on the page.")
                 return
 
-            answers = extract_answers(selection)
-            print("ANSWERS\n-------", answers)
-
-            clues = extract_clues(selection)
-            print("CLUES\n-------", clues)
-
-            for clue in clues:
-                print(clue)
+            game_data = extract_game_data(selection)
+            print(game_data)
 
             if output_file:
                 print("Saving to file...")
