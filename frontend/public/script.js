@@ -1,32 +1,46 @@
-// script.js
+class TriviaGameAPI {
+  static async startGame() {
+    const response = await fetch('http://localhost:3000/api/game/start', {
+      method: 'POST'
+    });
+    if (!response.ok) throw new Error('Failed to start the game');
+    return await response.json();
+  }
+
+  static async submitAnswer(sessionId, answer) {
+    const response = await fetch('http://localhost:3000/api/game/answer', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ sessionId, answer })
+    });
+    if (!response.ok) throw new Error('Failed to submit answer');
+    return await response.json();
+  }
+}
+
 class TriviaGame {
   constructor() {
     this.gameSession = null;
     this.score = 0;
-    this.currentQuestion = null;
 
-    // DOM Elements
     this.startScreen = document.getElementById('startScreen');
     this.gameScreen = document.getElementById('gameScreen');
-    this.gameOverScreen = document.getElementById('gameOverScreen');
+    this.resultsScreen = document.getElementById('resultsScreen');
     this.messageElement = document.getElementById('message');
 
-    // Bind event handlers
     this.initializeEventListeners();
   }
 
   initializeEventListeners() {
     document.getElementById('startButton').addEventListener('click', () => this.startGame());
-    document.getElementById('playAgainButton').addEventListener('click', () => this.startGame());
     document.getElementById('answerForm').addEventListener('submit', (e) => this.handleAnswer(e));
   }
 
   async startGame() {
     try {
-      const response = await fetch('http://localhost:3000/api/game/start', {
-        method: 'POST'
-      });
-      const data = await response.json();
+      const data = await TriviaGameAPI.startGame();
 
       this.gameSession = data.sessionId;
       this.score = 0;
@@ -36,7 +50,7 @@ class TriviaGame {
       this.showScreen('game');
       this.showMessage('Game started! Good luck!');
     } catch (error) {
-      this.showMessage('Error starting game. Please try again.');
+      this.showMessage(error.message || 'Error starting game. Please try again.');
     }
   }
 
@@ -48,18 +62,7 @@ class TriviaGame {
     if (!answer) return;
 
     try {
-      const response = await fetch('http://localhost:3000/api/game/answer', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          sessionId: this.gameSession,
-          answer: answer
-        })
-      });
-
-      const data = await response.json();
+      const data = await TriviaGameAPI.submitAnswer(this.gameSession, answer);
 
       if (data.gameOver) {
         this.endGame(data.totalScore);
@@ -74,7 +77,7 @@ class TriviaGame {
 
       answerInput.value = '';
     } catch (error) {
-      this.showMessage('Error submitting answer. Please try again.');
+      this.showMessage(error.message || 'Error submitting answer. Please try again.');
     }
   }
 
@@ -92,14 +95,14 @@ class TriviaGame {
 
   endGame(finalScore) {
     document.getElementById('finalScore').textContent = finalScore;
-    this.showScreen('gameOver');
-    this.showMessage(`Game Over! Final Score: ${finalScore}`);
+    this.showScreen('results');
+    this.showMessage(`Final Score: ${finalScore}`);
   }
 
   showScreen(screenType) {
     this.startScreen.classList.add('hidden');
     this.gameScreen.classList.add('hidden');
-    this.gameOverScreen.classList.add('hidden');
+    this.resultsScreen.classList.add('hidden');
 
     switch (screenType) {
       case 'start':
@@ -108,8 +111,8 @@ class TriviaGame {
       case 'game':
         this.gameScreen.classList.remove('hidden');
         break;
-      case 'gameOver':
-        this.gameOverScreen.classList.remove('hidden');
+      case 'results':
+        this.resultsScreen.classList.remove('hidden');
         break;
     }
   }
@@ -117,13 +120,13 @@ class TriviaGame {
   showMessage(text) {
     this.messageElement.textContent = text;
     this.messageElement.classList.remove('hidden');
+
     setTimeout(() => {
       this.messageElement.classList.add('hidden');
-    }, 3000);
+    }, 60000);
   }
 }
 
-// Initialize the game when the page loads
 document.addEventListener('DOMContentLoaded', () => {
   new TriviaGame();
 });

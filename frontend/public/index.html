@@ -3,8 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Brain Gymnastics & Thrice</title>
-    <!-- Add Tailwind CSS via CDN -->
+    <title>Thrice</title>
     <!-- <script src="https://cdn.tailwindcss.com"></script> -->
     <link rel="stylesheet" href="styles.css" />
   </head>
@@ -14,16 +13,10 @@
     <div class="container max-w-3xl mx-auto px-4 py-8">
       <!-- Shared Header -->
       <header class="text-center mb-8">
-        <h1
-          class="text-4xl md:text-5xl font-bold text-primary drop-shadow-[0_0_10px_rgba(0,255,136,0.5)]"
-        >
-          Thrice
-        </h1>
+        <h1 class="text-4xl md:text-5xl font-bold text-primary">Thrice</h1>
       </header>
 
-      <!-- Main Game Area -->
       <main id="gameArea">
-        <!-- Initial state - Start button -->
         <div
           id="startScreen"
           class="screen bg-white/10 rounded-2xl p-8 mb-4 text-center"
@@ -32,17 +25,10 @@
             id="startButton"
             class="btn bg-primary text-bg-dark px-6 py-3 rounded-lg text-lg font-semibold hover:bg-[#00cc6f] transform hover:-translate-y-0.5 transition-all duration-300"
           >
-            Start New Game
+            Start
           </button>
         </div>
 
-        <!-- Message section -->
-        <div
-          id="message"
-          class="screen hidden bg-white/10 rounded-2xl p-8 mb-4 text-primary text-base font-bold text-center"
-        ></div>
-
-        <!-- Game screen -->
         <div id="gameScreen" class="screen hidden bg-white/10 rounded-2xl">
           <div
             class="game-info flex justify-between items-center flex-col gap-4"
@@ -64,6 +50,11 @@
             </div>
           </div>
 
+          <div
+            id="message"
+            class="screen hidden rounded-2xl p-4 mb-4 text-primary text-base font-bold text-center"
+          ></div>
+
           <div class="question-box p-4 mt-4">
             <p id="questionText" class="question text-xl text-center mb-6">
               Loading question...
@@ -80,15 +71,14 @@
                 type="submit"
                 class="btn bg-primary text-bg-dark px-6 py-3 rounded-lg font-semibold hover:bg-[#00cc6f] transform hover:-translate-y-0.5 transition-all duration-300"
               >
-                Submit Answer
+                Submit
               </button>
             </form>
           </div>
         </div>
 
-        <!-- Results Section -->
         <div
-          id="results"
+          id="scoreBoard"
           class="mt-2 py-2 px-2 bg-amber text-base text-black font-base rounded-2xl"
         >
           <h4 class="mb-2 text-xl text-black font-bold text-center">
@@ -96,21 +86,14 @@
           </h4>
         </div>
 
-        <!-- Game over screen -->
         <div
-          id="gameOverScreen"
+          id="resultsScreen"
           class="screen hidden bg-white/10 rounded-2xl p-8 mb-4 text-center"
         >
           <h2 class="text-3xl font-bold text-primary mb-4">Game Over!</h2>
           <p class="text-xl mb-6">
             Final Score: <span id="finalScore">0</span>
           </p>
-          <button
-            id="playAgainButton"
-            class="btn bg-primary text-bg-dark px-6 py-3 rounded-lg font-semibold hover:bg-[#00cc6f] transform hover:-translate-y-0.5 transition-all duration-300"
-          >
-            Play Again
-          </button>
         </div>
       </main>
     </div>
