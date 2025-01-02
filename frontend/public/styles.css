@@ -814,11 +814,6 @@ video {
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
 }
 
-.drop-shadow-\[0_0_10px_rgba\(0\2c 255\2c 136\2c 0\.5\)\] {
-  --tw-drop-shadow: drop-shadow(0 0 10px rgba(0,255,136,0.5));
-  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
-}
-
 .transition-all {
   transition-property: all;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);

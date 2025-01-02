@@ -120,10 +120,6 @@ class TriviaGame {
   showMessage(text) {
     this.messageElement.textContent = text;
     this.messageElement.classList.remove('hidden');
-
-    setTimeout(() => {
-      this.messageElement.classList.add('hidden');
-    }, 60000);
   }
 }
 
