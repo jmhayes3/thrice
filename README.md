@@ -1,10 +1,34 @@
 # Thrice
 
-## How To Play
+## Project Structure
 
-> 5 rounds of brain gymnastics, each from a different category
-> 3 questions per round, all with the same answer (how convenient!)
-> Go ahead and guess, a wrong answer is the same as passing.
-> Scoring:
-> 1st try = 3, 2nd = 2, 3rd = 1
-> After that, well... better luck next question!
+backend/
+├── functions/ # Main source directory for Cloudflare Pages
+│ ├── api/ # API routes directory
+│ │ ├── [[route]].ts # Main API entry point
+│ │ └── index.ts # Optional: Additional routes
+│ ├── middleware/ # Custom middleware
+│ │ ├── auth.ts # Authentication middleware
+│ │ ├── error-handler.ts # Error handling middleware
+│ │ └── validators.ts # Request validation middleware
+│ ├── controllers/ # Route handlers
+│ │ ├── user.controller.ts # User-related route handlers
+│ │ └── game.controller.ts # Game-related route handlers
+│ ├── services/ # Business logic layer
+│ │ ├── user.service.ts # User-related business logic
+│ │ └── game.service.ts # Game-related business logic
+│ ├── models/ # Data models and interfaces
+│ │ ├── user.model.ts # User-related interfaces
+│ │ └── game.model.ts # Game-related interfaces
+│ └── utils/ # Utility functions
+│ ├── constants.ts # Constants and configuration
+│ └── helpers.ts # Helper functions
+├── public/ # Static files (if needed)
+├── tests/ # Test files
+│ ├── api.test.ts # API tests
+│ └── services.test.ts # Service tests
+├── .gitignore # Git ignore file
+├── package.json # Project dependencies and scripts
+├── tsconfig.json # TypeScript configuration
+├── wrangler.toml # Cloudflare configuration
+└── README.md # Project documentation

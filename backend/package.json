@@ -1,0 +1,21 @@
+{
+  "name": "thrice-api",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler pages dev ./functions",
+    "build": "tsc",
+    "deploy": "wrangler pages deploy ./functions",
+    "cf-typegen": "wrangler types"
+  },
+  "dependencies": {
+    "hono": "^4.4.7"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20241230.0",
+    "@types/node": "20.8.3",
+    "@types/service-worker-mock": "^2.0.1",
+    "typescript": "^5.7.2",
+    "wrangler": "^3.60.3"
+  }
+}
