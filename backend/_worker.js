@@ -82,8 +82,7 @@ export default {
     const url = new URL(request.url);
     if (url.pathname === '/') {
       return env.ASSETS.fetch(request);
-    }
-    else if (url.pathname.startsWith('/api/')) {
+    } else if (url.pathname.startsWith('/api/')) {
       if (url.pathname === '/api/game/start') {
         return new Response(
           JSON.stringify({
@@ -92,8 +91,7 @@ export default {
           }),
           { headers: { 'Content-Type': 'application/json' } }
         );
-      }
-      else if (url.pathname === '/api/game/answer' && request.method === 'POST') {
+      } else if (url.pathname === '/api/game/answer' && request.method === 'POST') {
         const { session, round, answer } = await request.json();
         const updatedGameState = updateGameState(session, round, answer);
         return new Response(
@@ -105,9 +103,6 @@ export default {
         );
       }
       return new Response('API Response');
-    }
-    else {
-      return env.ASSETS.fetch(request);
     }
   }
 };
