@@ -83,7 +83,7 @@ export default {
 
     if (url.pathname.startsWith('/api/')) {
       // Handle API requests.
-      if (url.pathname === '/api/game/start' && request.method === 'POST') {
+      if (url.pathname === '/api/game/start') {
         return new Response(
           JSON.stringify({
             gameState: gameState,
@@ -104,7 +104,6 @@ export default {
           { headers: { 'Content-Type': 'application/json' } }
         );
       }
-      return new Response('Ok');
     }
     // Otherwise, serve the static assets.
     // Without this, the Worker will error and no assets will be served.
