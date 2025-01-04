@@ -80,7 +80,6 @@ const getAttemptCount = (session, round) => {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-
     if (url.pathname.startsWith('/api/')) {
       // Handle API requests.
       if (url.pathname === '/api/game/start') {
@@ -95,7 +94,6 @@ export default {
       else if (url.pathname === '/api/game/answer' && request.method === 'POST') {
         const { session, round, answer } = await request.json();
         const updatedGameState = updateGameState(session, round, answer);
-
         return new Response(
           JSON.stringify({
             gameState: updatedGameState,
@@ -104,6 +102,13 @@ export default {
           { headers: { 'Content-Type': 'application/json' } }
         );
       }
+      return new Response(
+        JSON.stringify({
+          message: 'Your answer was correct.',
+        }),
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+      // return env.ASSETS.fetch(request);
     }
     // Otherwise, serve the static assets.
     // Without this, the Worker will error and no assets will be served.
