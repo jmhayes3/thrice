@@ -80,8 +80,10 @@ const getAttemptCount = (session, round) => {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    if (url.pathname.startsWith('/api/')) {
-      // Handle API requests.
+    if (url.pathname === '/') {
+      return env.ASSETS.fetch(request);
+    }
+    else if (url.pathname.startsWith('/api/')) {
       if (url.pathname === '/api/game/start') {
         return new Response(
           JSON.stringify({
@@ -102,16 +104,10 @@ export default {
           { headers: { 'Content-Type': 'application/json' } }
         );
       }
-      return new Response(
-        JSON.stringify({
-          message: 'Your answer was correct.',
-        }),
-        { headers: { 'Content-Type': 'application/json' } }
-      );
-      // return env.ASSETS.fetch(request);
+      return new Response('API Response');
     }
-    // Otherwise, serve the static assets.
-    // Without this, the Worker will error and no assets will be served.
-    return env.ASSETS.fetch(request);
-  },
+    else {
+      return env.ASSETS.fetch(request);
+    }
+  }
 };
