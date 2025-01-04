@@ -80,27 +80,36 @@
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    if (url.pathname === '/') {
+    console.log(url);
+    try {
+      if (url.pathname === '/') {
+        return env.ASSETS.fetch(request);
+      } else if (url.pathname === '/api/game/start') {
+        return new Response(
+          JSON.stringify({
+            gameState: gameState,
+            message: 'Game started. Good luck!',
+          }),
+          { headers: { 'Content-Type': 'application/json' } }
+        );
+      } else if (url.pathname === '/api/game/answer' && request.method === 'POST') {
+        const { session, round, answer } = await request.json();
+        const updatedGameState = updateGameState(session, round, answer);
+        return new Response(
+          JSON.stringify({
+            gameState: updatedGameState,
+            message: 'Your answer was correct.',
+          }),
+          { headers: { 'Content-Type': 'application/json' } }
+        );
+      }
       return env.ASSETS.fetch(request);
-    } else if (url.pathname === '/api/game/start') {
-      return new Response(
-        JSON.stringify({
-          gameState: gameState,
-          message: 'Game started. Good luck!',
-        }),
-        { headers: { 'Content-Type': 'application/json' } }
-      );
-    } else if (url.pathname === '/api/game/answer' && request.method === 'POST') {
-      const { session, round, answer } = await request.json();
-      const updatedGameState = updateGameState(session, round, answer);
-      return new Response(
-        JSON.stringify({
-          gameState: updatedGameState,
-          message: 'Your answer was correct.',
-        }),
-        { headers: { 'Content-Type': 'application/json' } }
-      );
+    } catch (e) {
+      console.log(e);
+      if (e.status === 404) {
+        return new Response("Not Found", { status: 404 });
+      }
+      throw e;
     }
-    return env.ASSETS.fetch(request);
   }
 }
