@@ -1,21 +1,14 @@
 {
-  "name": "thrice-api",
+  "name": "thrice-backend",
   "version": "0.0.1",
   "private": true,
   "scripts": {
     "dev": "wrangler pages dev",
-    "build": "tsc",
-    "deploy": "wrangler pages deploy",
-    "cf-typegen": "wrangler types"
-  },
-  "dependencies": {
-    "hono": "^4.4.7"
+    "build": "npm run build:css",
+    "build:css": "npx tailwindcss -i ./src/styles.css -o ./public/styles.css",
+    "deploy": "wrangler pages deploy"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20241230.0",
-    "@types/node": "20.8.3",
-    "@types/service-worker-mock": "^2.0.1",
-    "typescript": "^5.7.2",
-    "wrangler": "^3.60.3"
+    "tailwindcss": "^3.4.17"
   }
 }
