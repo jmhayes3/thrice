@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "wrangler pages dev",
     "build": "npm run build:css",
-    "build:css": "npx tailwindcss -i ./src/styles.css -o ./public/styles.css",
+    "build:css": "npx tailwindcss -i ./src/styles.css -o ./public/static/styles.css",
     "deploy": "wrangler pages deploy"
   },
   "devDependencies": {
