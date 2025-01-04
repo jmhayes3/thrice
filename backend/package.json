@@ -3,9 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "wrangler pages dev ./functions",
+    "dev": "wrangler pages dev",
     "build": "tsc",
-    "deploy": "wrangler pages deploy ./functions",
+    "deploy": "wrangler pages deploy",
     "cf-typegen": "wrangler types"
   },
   "dependencies": {
