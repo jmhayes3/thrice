@@ -4,6 +4,36 @@ import sys
 from playwright.sync_api import sync_playwright
 
 
+def match_percentage_full(text):
+    """Matches 1-2 digit numbers followed by a % sign."""
+    pattern = r"\b\s*\d{1,2}\s*%\s*$"
+    matches = re.findall(pattern, text)
+    return matches
+
+def match_percentage(text):
+    """Matches 1-2 digit numbers followed by a % sign."""
+    pattern = r"\b\d{1,2}%\b"
+    matches = re.findall(pattern, text)
+    return matches
+
+def match_sentence_endings(text):
+    """Matches any character (.) zero or more times (*) followed by . or ? or !"""
+    pattern = r".*[.?!]"
+    matches = re.findall(pattern, text)
+    return matches
+
+def match_sentences_advanced(text):
+    """Matches sentences, with support for handling abbreviations."""
+    pattern = r"(?<!\b\w\.)(?<![A-Z][a-z]\.)(?<![A-Z]\.)\b.*?[.?!]\s*\b"
+    matches = re.findall(pattern, text)
+    return matches
+
+def match_one_or_two_digits(text):
+    """Matches 1-2 digit numbers."""
+    pattern = r"\b\d{1,2}\b"
+    matches = re.findall(pattern, text)
+    return matches
+
 def extract_game_data(selection) -> dict:
     game_data = {}
     for i in range(5):
@@ -12,12 +42,10 @@ def extract_game_data(selection) -> dict:
         if extracted:
             answer = extracted[0]
             print(f'Round {i} answer extracted: {answer}')
-            print(f'Extracting clues for round {i} with answer {answer}')
             clues = extract_clues(selection, i)
             if clues:
                 game_data[answer] = clues
     return game_data
-
 
 def extract_clues(selection, round_number) -> list:
     clues = []
@@ -26,13 +54,17 @@ def extract_clues(selection, round_number) -> list:
     if extracted:
         cleaned_text = re.sub(r'[\t\n]+', '', extracted[0]).strip()
         items = cleaned_text.split("%")[0:-2]
+        assert len(items) == 3
         for item in items:
-            question = item.split("?")[0].strip()
-            question_str = f"{question}?"
-            percent = item.split("?")[1].strip()
-            clues.append(dict(question=question_str, percent_correct=percent))
+            if '?' in item:
+                clue = item.split("?")[0].strip()
+                percent = match_percentage(item)
+                clues.append(dict(clue=f"{clue}?", percent_correct=percent[-1]))
+            else:
+                clue = item.split(".")[0].strip()
+                percent = match_percentage(item)
+                clues.append(dict(clue=f"{clue}.", percent_correct=percent[-1]))
     return clues
-
 
 def scrape(day, output_file=None):
     """
@@ -64,7 +96,7 @@ def scrape(day, output_file=None):
         page = context.new_page()
 
         try:
-            print(f'Navigating to {url}...')
+            print(f'Navigating to {url}.')
             page.goto(url, timeout=60000)  # Timeout after 60 seconds
             print("Page loaded successfully.")
 
@@ -100,4 +132,3 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     scrape(day=args.day, output_file=args.output)
-
