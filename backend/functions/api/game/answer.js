@@ -10,7 +10,6 @@ export async function onRequestPost(context) {
   });
 }
 
-// Example for GET requests to the same route
 export async function onRequestGet(context) {
   return new Response("Use POST to submit answer.", { status: 405 });
 }

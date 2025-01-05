@@ -5,3 +5,12 @@ compatibility_date = "2025-01-04"
 
 [env]
 production = { }
+
+[[kv_namespaces]]
+binding = "SESSION_CACHE"
+id = "9b72fe4a638c4c56804c34b19687c7ed"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "thrice_db"
+database_id = "9b780f11-6c4b-409a-9693-98e74021ef1e"
