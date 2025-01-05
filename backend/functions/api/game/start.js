@@ -1,4 +1,4 @@
-// api/game/start.js
+import questions from "./data";
 
 const generateSessionId = () => {
   // Generate session IDs using a timestamp and random number for uniqueness
@@ -74,7 +74,8 @@ const getAttemptCount = (session, round) => {
 export async function onRequestPost(context) {
   const requestBody = await context.request.json();
   console.log(requestBody);
-  const responseData = { message: "Game started!", gameState: gameState };
+
+  const responseData = { message: "Game started!", questions: questions };
   return new Response(JSON.stringify(responseData), {
     status: 200,
     headers: { 'Content-Type': 'application/json' },
