@@ -68,6 +68,7 @@ INSERT INTO clues (round_id, clue_number, description, answer, points) VALUES
     (5, 3, 'This play features three witches who predict Macbeth will become king.', 'Macbeth', 1);
 
 DROP VIEW IF EXISTS game_overview;
+
 CREATE VIEW game_overview AS
 SELECT 
     g.game_id,
