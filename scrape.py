@@ -59,17 +59,13 @@ def scrape(day, db_conn=None):
                           'Chrome/58.0.3029.110 Safari/537.3'
         })
         page = context.new_page()
-
         try:
             page.goto(url, timeout=60000)
-
-            print("Waiting for the main content to load...")
             page.wait_for_selector('#day-view', timeout=60000)
-            print("Selector #day-view found")
 
             selection = page.query_selector('#day-view')
             if not selection:
-                print("Selection not found on the page")
+                print("Selection #day-view not found on the page")
                 return
 
             game_data = extract_game_data(selection)
