@@ -37,9 +37,8 @@ def scrape(day, output_file=None):
     Returns:
         None
     """
-    print(f"Starting scrape with day={day} and output_file={output_file}")
     url = f'https://thrice.geekswhodrink.com/stats?day={day}'
-    print(f"Constructed URL: {url}")
+    print(f"Scraping {url}")
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
@@ -94,17 +93,14 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.day:
-        print(f"Scraping {args.day}")
         scrape(day=args.day, output_file=args.output)
     elif args.start and args.end:
         start_date = date.fromisoformat(args.start)
         end_date = date.fromisoformat(args.end)
 
-        difference_in_days = (end_date - start_date).days
-        print(f"Scraping from {args.start} to {args.end} ({difference_in_days} days)")
-
+        num_days = (end_date - start_date).days
+        print(f"Scraping from {args.start} to {args.end} ({num_days} days)")
         for current_date in date_range_generator(start_date, end_date):
-            print(f"Starting scrape for {current_date}")
             scrape(day=str(current_date), output_file=args.output)
     else:
         print("Error: day or start and end args required")
