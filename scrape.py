@@ -66,13 +66,13 @@ def scrape(day, output_file=None):
                 return
 
             game_data = extract_game_data(selection)
-            print("=" * 60 + " " + day + " " + "=" * 60)
+            print("="*40 + " " + day + " " + "="*40)
 
             for i, round in enumerate(game_data, 1):
                 answer, clues = round
-                print(f"\tRound {i}: {answer}")
+                print(f"Round {i}: {answer}")
                 for clue, correct in clues:
-                    print(f"\t{clue} {correct}%")
+                    print(f"{clue} {correct}%")
 
             if output_file:
                 print("Saving to file...")
@@ -94,19 +94,17 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.day:
-        print(f"Scraping day: {args.day}")
+        print(f"Scraping {args.day}")
         scrape(day=args.day, output_file=args.output)
     elif args.start and args.end:
-        print(f"Scraping range: {args.start}-{args.end}")
-
         start_date = date.fromisoformat(args.start)
         end_date = date.fromisoformat(args.end)
 
         difference_in_days = (end_date - start_date).days
-        print(f"Number of days between {start_date} and {end_date}: {difference_in_days}")
+        print(f"Scraping from {args.start} to {args.end} ({difference_in_days} days)")
 
         for current_date in date_range_generator(start_date, end_date):
             print(f"Starting scrape for {current_date}")
-            scrape(day=current_date, output_file=args.output)
+            scrape(day=str(current_date), output_file=args.output)
     else:
         print("Error: day or start and end args required")
