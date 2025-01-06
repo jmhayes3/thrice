@@ -32,18 +32,3 @@ CREATE TABLE clues (
 
 CREATE INDEX idx_rounds_game_id ON rounds(game_id);
 CREATE INDEX idx_clues_round_id ON clues(round_id);
-
-DROP VIEW IF EXISTS game_overview;
-CREATE VIEW game_overview AS
-SELECT 
-    g.game_id,
-    g.title,
-    r.round_number,
-    r.answer,
-    r.category,
-    COUNT(c.clue_id) as clue_count,
-FROM games g
-JOIN rounds r ON g.game_id = r.game_id
-JOIN clues c ON r.round_id = c.round_id
-GROUP BY g.game_id, g.title, r.round_number, r.answer, r.category
-ORDER BY g.game_id, r.round_number;

@@ -37,12 +37,9 @@ def insert_game_data(db_conn, day, game_data):
 
             for clue_num, (clue_text, percent_correct) in enumerate(clues, 1):
                 points = 3 if clue_num == 1 else (2 if clue_num == 2 else 1)
-
                 cursor.execute(
-                    """INSERT INTO clues
-                       (round_id, clue_number, clue_text, percent_correct, points)
-                       VALUES (?, ?, ?, ?, ?)""",
-                    (round_id, clue_num, clue_text, percent_correct, points)
+                    "INSERT INTO clues (round_id, clue_number, clue_text, percent_correct, points) VALUES (?, ?, ?, ?, ?)",
+                    (round_id, clue_num, clue_text, percent_correct, points,)
                 )
 
         conn.commit()
