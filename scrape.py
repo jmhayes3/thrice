@@ -1,13 +1,65 @@
+import sqlite3
 from datetime import date
-
 from playwright.sync_api import sync_playwright
+from utils import match_percentages, match_sentences, date_range_generator
 
-from utils import (
-    match_percentages,
-    match_sentences,
-    date_range_generator
-)
 
+def insert_game_data(db_conn, day, game_data):
+    """
+    Inserts game data into the database.
+
+    Parameters:
+        db_conn (str): Path to the SQLite database.
+        day (str): The date of the game data in 'YYYY-MM-DD' format.
+        game_data (list): A list of rounds, where each round is a tuple of (answer, [(clue, percentage), ...]).
+
+    Returns:
+        None
+    """
+    try:
+        conn = sqlite3.connect(db_conn)
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS games (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                date TEXT NOT NULL
+            )
+        """)
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS rounds (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                game_id INTEGER NOT NULL,
+                answer TEXT NOT NULL,
+                FOREIGN KEY (game_id) REFERENCES games (id)
+            )
+        """)
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS clues (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                round_id INTEGER NOT NULL,
+                clue TEXT NOT NULL,
+                percentage INTEGER NOT NULL,
+                FOREIGN KEY (round_id) REFERENCES rounds (id)
+            )
+        """)
+
+        cursor.execute("INSERT INTO games (date) VALUES (?)", (day,))
+        game_id = cursor.lastrowid
+
+        for answer, clues in game_data:
+            cursor.execute("INSERT INTO rounds (game_id, answer) VALUES (?, ?)", (game_id, answer))
+            round_id = cursor.lastrowid
+
+            for clue, percentage in clues:
+                cursor.execute("INSERT INTO clues (round_id, clue, percentage) VALUES (?, ?, ?)", (round_id, clue, percentage))
+
+        conn.commit()
+        print(f"Game data for {day} inserted successfully.")
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+    finally:
+        conn.close()
 
 def extract_game_data(selection):
     rounds = []
@@ -78,6 +130,7 @@ def scrape(day, db_conn=None):
 
             if db_conn:
                 print("Inserting data into database...")
+                insert_game_data(db_conn, day, game_data)
 
         except Exception as e:
             import traceback
