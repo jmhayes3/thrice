@@ -6,9 +6,9 @@
   "scripts": {
     "test": "echo \"This is a test!\"",
     "build": "npm run build:css",
-    "build:css": "npx tailwindcss -i ./frontend/src/styles.css -o ./frontend/public/styles.css"
+    "build:css": "npx tailwindcss -i ./backend/src/styles.css -o ./backend/public/styles.css",
+    "dev": "wrangler pages dev ./public",
+    "deploy": "wrangler pages deploy ./public"
   },
-  "dependencies": {
-    "tailwindcss": "^3.4.17"
-  }
+  "dependencies": {}
 }
