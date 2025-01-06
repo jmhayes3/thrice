@@ -35,7 +35,7 @@ CREATE INDEX idx_clues_round_id ON clues(round_id);
 
 DROP VIEW IF EXISTS game_overview;
 CREATE VIEW game_overview AS
-SELECT 
+SELECT
     g.game_id,
     g.title,
     r.round_number,

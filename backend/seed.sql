@@ -1,5 +1,5 @@
 -- Insert sample games
-INSERT INTO games (title, published, is_active) VALUES 
+INSERT INTO games (title, published, is_active) VALUES
     ('Science Spectacular', '2024-11-15', 0),
     ('Pop Culture Paradise', '2024-11-30', 0),
     ('History Mysteries', '2024-12-15', 0),
