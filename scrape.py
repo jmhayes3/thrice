@@ -6,7 +6,7 @@ from utils import match_percentages, match_sentences, date_range_generator
 
 def init_db(db_path):
     """Initialize database with schema."""
-    with open('schema.sql', 'r') as f:
+    with open("schema.sql", "r") as f:
         schema = f.read()
 
     conn = sqlite3.connect(db_path)
@@ -20,18 +20,15 @@ def insert_game_data(db_conn, day, game_data):
         conn = sqlite3.connect(db_conn)
         cursor = conn.cursor()
 
-        published = datetime.strptime(day, '%Y-%m-%d')
-        cursor.execute(
-            "INSERT INTO games (published) VALUES (?)",
-            (published,)
-        )
+        published = datetime.strptime(day, "%Y-%m-%d")
+        cursor.execute("INSERT INTO games (published) VALUES (?)", (published,))
         game_id = cursor.lastrowid
 
         for round_num, (answer, clues) in enumerate(game_data, 1):
             # Category is null since it hasn't been scraped
             cursor.execute(
                 "INSERT INTO rounds (game_id, round_number, answer, category) VALUES (?, ?, ?, ?)",
-                (game_id, round_num, answer, None)
+                (game_id, round_num, answer, None),
             )
             round_id = cursor.lastrowid
 
@@ -39,7 +36,13 @@ def insert_game_data(db_conn, day, game_data):
                 points = 3 if clue_num == 1 else (2 if clue_num == 2 else 1)
                 cursor.execute(
                     "INSERT INTO clues (round_id, clue_number, clue_text, percent_correct, points) VALUES (?, ?, ?, ?, ?)",
-                    (round_id, clue_num, clue_text, percent_correct, points,)
+                    (
+                        round_id,
+                        clue_num,
+                        clue_text,
+                        percent_correct,
+                        points,
+                    ),
                 )
 
         conn.commit()
@@ -58,7 +61,10 @@ def extract_game_data(selection):
         selector_answer = f'[data-dropdown-index-param="{i}"]'
         extracted_answers = []
         try:
-            extracted_answers = [element.inner_text().strip() for element in selection.query_selector_all(selector_answer)]
+            extracted_answers = [
+                element.inner_text().strip()
+                for element in selection.query_selector_all(selector_answer)
+            ]
         except Exception as e:
             print(f"Error extracting answers for selector {selector_answer}: {e}")
         if extracted_answers:
@@ -66,13 +72,18 @@ def extract_game_data(selection):
             selector_clues = f'[data-dropdown-target="panel{i}"]'
             extracted_clues = []
             try:
-                extracted_clues = [element.inner_text().strip() for element in selection.query_selector_all(selector_clues)]
+                extracted_clues = [
+                    element.inner_text().strip()
+                    for element in selection.query_selector_all(selector_clues)
+                ]
             except Exception as e:
                 print(f"Error extracting clues for selector {selector_clues}: {e}")
             if extracted_clues:
                 clues_text = extracted_clues[0]
                 clues = [c.lstrip() for c in match_sentences(clues_text)]
-                percentages = [int(p.rstrip("%")) for p in match_percentages(clues_text)]
+                percentages = [
+                    int(p.rstrip("%")) for p in match_percentages(clues_text)
+                ]
                 round = (answer, tuple(zip(clues, percentages)))
                 rounds.append(round)
     return rounds
@@ -80,21 +91,21 @@ def extract_game_data(selection):
 
 def scrape(day, db_conn=None):
     """Scrape data for a given day."""
-    url = f'https://thrice.geekswhodrink.com/stats?day={day}'
+    url = f"https://thrice.geekswhodrink.com/stats?day={day}"
     print(f"Scraping {url}")
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         context = browser.new_context(
-            user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
         )
         page = context.new_page()
 
         try:
             page.goto(url, timeout=60000)
-            page.wait_for_selector('#day-view', timeout=60000)
+            page.wait_for_selector("#day-view", timeout=60000)
 
-            selection = page.query_selector('#day-view')
+            selection = page.query_selector("#day-view")
             if not selection:
                 print(f"No data found for {day}")
                 return
@@ -115,6 +126,7 @@ def scrape(day, db_conn=None):
 
         except Exception as e:
             import traceback
+
             print(f"Error scraping {day}: {e}\n{traceback.format_exc()}")
         finally:
             browser.close()
@@ -123,12 +135,18 @@ def scrape(day, db_conn=None):
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description='Scrape data from thrice.geekswhodrink.com')
-    parser.add_argument('--day', type=str, help="Date in 'YYYY-MM-DD' format")
-    parser.add_argument('--start', type=str, help="Start date in 'YYYY-MM-DD' format")
-    parser.add_argument('--end', type=str, help="End date in 'YYYY-MM-DD' format")
-    parser.add_argument('--db', type=str, default='thrice.db', help='SQLite database file')
-    parser.add_argument('--init-db', action='store_true', help='Initialize database schema')
+    parser = argparse.ArgumentParser(
+        description="Scrape data from thrice.geekswhodrink.com"
+    )
+    parser.add_argument("--day", type=str, help="Date in 'YYYY-MM-DD' format")
+    parser.add_argument("--start", type=str, help="Start date in 'YYYY-MM-DD' format")
+    parser.add_argument("--end", type=str, help="End date in 'YYYY-MM-DD' format")
+    parser.add_argument(
+        "--db", type=str, default="thrice.db", help="SQLite database file"
+    )
+    parser.add_argument(
+        "--init-db", action="store_true", help="Initialize database schema"
+    )
     args = parser.parse_args()
 
     if args.init_db:

@@ -17,6 +17,7 @@ def match_percentages(text):
     matches = re.findall(pattern, text)
     return matches
 
+
 def match_sentences(text):
     """
     Matches any character (.) zero or more times (*) followed by . or ? or !
@@ -30,6 +31,7 @@ def match_sentences(text):
     pattern = r".*[.?!]"
     matches = re.findall(pattern, text)
     return matches
+
 
 def date_range_generator(start_date, end_date):
     """
