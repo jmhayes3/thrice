@@ -13,11 +13,21 @@ def extract_game_data(selection):
     rounds = []
     for i in range(5):
         selector_answer = f'[data-dropdown-index-param="{i}"]'
-        extracted_answers = [element.inner_text().strip() for element in selection.query_selector_all(selector_answer)]
+        extracted_answers = []
+        try:
+            extracted_answers = [element.inner_text().strip() for element in selection.query_selector_all(selector_answer)]
+        except Exception as e:
+            print(f"Error extracting answers for selector {selector_answer}: {e}")
+
         if extracted_answers:
             answer = extracted_answers[0]
             selector_clues = f'[data-dropdown-target="panel{i}"]'
-            extracted_clues = [element.inner_text().strip() for element in selection.query_selector_all(selector_clues)]
+            extracted_clues = []
+            try:
+                extracted_clues = [element.inner_text().strip() for element in selection.query_selector_all(selector_clues)]
+            except Exception as e:
+                print(f"Error extracting clues for selector {selector_clues}: {e}")
+
             if extracted_clues:
                 clues_text = extracted_clues[0]
                 clues = [c.lstrip() for c in match_sentences(clues_text)]
@@ -26,13 +36,13 @@ def extract_game_data(selection):
                 rounds.append(round)
     return rounds
 
-def scrape(day, output_file=None):
+def scrape(day, db_conn=None):
     """
     Scrapes data from thrice.geekswhodrink.com for a given day using Playwright.
 
     Parameters:
         day (str): Date in 'YYYY-MM-DD' format, e.g., '2024-11-30'
-        output_file (str): Filename to save the scraped data (CSV format)
+        db (str): DB connection
 
     Returns:
         None
@@ -51,9 +61,7 @@ def scrape(day, output_file=None):
         page = context.new_page()
 
         try:
-            print(f'Navigating to {url}')
             page.goto(url, timeout=60000)
-            print("Page loaded successfully")
 
             print("Waiting for the main content to load...")
             page.wait_for_selector('#day-view', timeout=60000)
@@ -65,7 +73,6 @@ def scrape(day, output_file=None):
                 return
 
             game_data = extract_game_data(selection)
-            print("="*40 + " " + day + " " + "="*40)
 
             for i, round in enumerate(game_data, 1):
                 answer, clues = round
@@ -73,11 +80,12 @@ def scrape(day, output_file=None):
                 for clue, correct in clues:
                     print(f"{clue} {correct}%")
 
-            if output_file:
-                print("Saving to file...")
+            if db_conn:
+                print("Inserting data into database...")
 
         except Exception as e:
-            print(f"An error occurred: {e}")
+            import traceback
+            print(f"An error occurred: {e}\n{traceback.format_exc()}")
         finally:
             browser.close()
 
@@ -89,18 +97,24 @@ if __name__ == "__main__":
     parser.add_argument('--day', type=str, required=False, help="Date in 'YYYY-MM-DD' format, e.g., '2023-12-04'")
     parser.add_argument('--start', type=str, required=False, help="Date in 'YYYY-MM-DD' format, e.g., '2023-12-04'")
     parser.add_argument('--end', type=str, required=False, help="Date in 'YYYY-MM-DD' format, e.g., '2024-01-04'")
-    parser.add_argument('--output', type=str, required=False, default=None, help='Output file')
+    parser.add_argument('--db', type=str, default='thrice.db', help='SQLite database file path')
     args = parser.parse_args()
 
     if args.day:
-        scrape(day=args.day, output_file=args.output)
+        scrape(day=args.day, db_conn=args.db)
     elif args.start and args.end:
         start_date = date.fromisoformat(args.start)
         end_date = date.fromisoformat(args.end)
 
-        num_days = (end_date - start_date).days
-        print(f"Scraping from {args.start} to {args.end} ({num_days} days)")
-        for current_date in date_range_generator(start_date, end_date):
-            scrape(day=str(current_date), output_file=args.output)
+        if start_date > end_date:
+            print("Error: start cannot be after end.")
+        elif start_date == end_date:
+            print("Warning: start and end are the same. Using start date.")
+            scrape(day=args.start, db_conn=args.db)
+        else:
+            num_days = (end_date - start_date).days
+            print(f"Scraping from {args.start} to {args.end} ({num_days} days).")
+            for current_date in date_range_generator(start_date, end_date):
+                scrape(day=str(current_date), db_conn=args.db)
     else:
-        print("Error: day or start and end args required")
+        print("Error: day or start and end args required.")
