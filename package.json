@@ -1,14 +1,14 @@
 {
   "name": "thrice",
-  "version": "0.0.1",
-  "description": "Thrice emulator.",
-  "license": "MIT",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "test": "echo \"This is a test!\"",
     "build": "npm run build:css",
-    "build:css": "npx tailwindcss -i ./backend/src/styles.css -o ./backend/public/styles.css",
-    "dev": "wrangler pages dev ./public",
-    "deploy": "wrangler pages deploy ./public"
+    "build:css": "npx tailwindcss -i ./src/styles.css -o ./public/styles.css",
+    "dev": "wrangler pages dev",
+    "deploy": "wrangler pages deploy"
   },
-  "dependencies": {}
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  }
 }
