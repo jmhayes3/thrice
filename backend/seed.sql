@@ -1,8 +1,9 @@
 -- Insert sample games
 INSERT INTO games (title, published, is_active) VALUES 
-    ('Science Spectacular', '2024-11-15', 1),
-    ('Pop Culture Paradise', '2024-11-30', 1),
-    ('History Mysteries', '2024-12-15', 0);
+    ('Science Spectacular', '2024-11-15', 0),
+    ('Pop Culture Paradise', '2024-11-30', 0),
+    ('History Mysteries', '2024-12-15', 0),
+    ('Thrice Trivia Night', "2024-12-31", 0);
 
 -- Science Spectacular Rounds
 INSERT INTO rounds (game_id, round_number, answer, category) VALUES
