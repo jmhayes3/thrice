@@ -2,14 +2,12 @@
   "name": "thrice",
   "version": "0.0.1",
   "description": "Thrice emulator.",
+  "license": "MIT",
   "scripts": {
     "test": "echo \"This is a test!\"",
     "build": "npm run build:css",
     "build:css": "npx tailwindcss -i ./frontend/src/styles.css -o ./frontend/public/styles.css"
   },
-  "keywords": [],
-  "author": "jmhayes3",
-  "license": "MIT",
   "dependencies": {
     "tailwindcss": "^3.4.17"
   }
