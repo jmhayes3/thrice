@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS games;
 CREATE TABLE games (
     game_id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT,
-    published DATETIME NOT NULL,
+    published DATETIME NOT NULL UNIQUE,
     is_active INTEGER DEFAULT 0
 );
 
