@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "npm run build:css",
-    "build:css": "npx tailwindcss -i ./src/styles.css -o ./public/styles.css",
+    "build:css": "npx tailwindcss -i ./src/styles.css -o ./public/static/styles.css",
     "dev": "wrangler pages dev",
     "deploy": "wrangler pages deploy"
   },
