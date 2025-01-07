@@ -1,7 +1,10 @@
 class TriviaGameAPI {
   static async startGame() {
     const response = await fetch('/api/game/start', {
-      method: 'GET'
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      },
     });
     if (!response.ok) throw new Error('Failed to start the game');
     return await response.json();
