@@ -1,103 +1,172 @@
-import re
-import sys
-
+import sqlite3
+from datetime import date, datetime
 from playwright.sync_api import sync_playwright
+from utils import match_percentages, match_sentences, date_range_generator
 
 
-def extract_game_data(selection) -> dict:
-    game_data = {}
+def init_db(db_path):
+    """Initialize database with schema."""
+    with open("schema.sql", "r") as f:
+        schema = f.read()
+
+    conn = sqlite3.connect(db_path)
+    conn.executescript(schema)
+    conn.close()
+
+
+def insert_game_data(db_conn, day, game_data):
+    """Insert game data."""
+    try:
+        conn = sqlite3.connect(db_conn)
+        cursor = conn.cursor()
+
+        published = datetime.strptime(day, "%Y-%m-%d")
+        cursor.execute("INSERT INTO games (published) VALUES (?)", (published,))
+        game_id = cursor.lastrowid
+
+        for round_num, (answer, clues) in enumerate(game_data, 1):
+            # Category is null since it hasn't been scraped
+            cursor.execute(
+                "INSERT INTO rounds (game_id, round_number, answer, category) VALUES (?, ?, ?, ?)",
+                (game_id, round_num, answer, None),
+            )
+            round_id = cursor.lastrowid
+
+            for clue_num, (clue_text, percent_correct) in enumerate(clues, 1):
+                points = 3 if clue_num == 1 else (2 if clue_num == 2 else 1)
+                cursor.execute(
+                    "INSERT INTO clues (round_id, clue_number, clue_text, percent_correct, points) VALUES (?, ?, ?, ?, ?)",
+                    (
+                        round_id,
+                        clue_num,
+                        clue_text,
+                        percent_correct,
+                        points,
+                    ),
+                )
+
+        conn.commit()
+        print(f"Game data for {day} inserted successfully")
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+        conn.rollback()
+    finally:
+        conn.close()
+
+
+def extract_game_data(selection):
+    """Extract game data from the page."""
+    rounds = []
     for i in range(5):
-        selector = f'[data-dropdown-index-param="{i}"]'
-        extracted = [element.inner_text().strip() for element in selection.query_selector_all(selector)]
-        if extracted:
-            answer = extracted[0]
-            print(f'Round {i} answer extracted: {answer}')
-            print(f'Extracting clues for round {i} with answer {answer}')
-            clues = extract_clues(selection, i)
-            if clues:
-                game_data[answer] = clues
-    return game_data
+        selector_answer = f'[data-dropdown-index-param="{i}"]'
+        extracted_answers = []
+        try:
+            extracted_answers = [
+                element.inner_text().strip()
+                for element in selection.query_selector_all(selector_answer)
+            ]
+        except Exception as e:
+            print(f"Error extracting answers for selector {selector_answer}: {e}")
+        if extracted_answers:
+            answer = extracted_answers[0]
+            selector_clues = f'[data-dropdown-target="panel{i}"]'
+            extracted_clues = []
+            try:
+                extracted_clues = [
+                    element.inner_text().strip()
+                    for element in selection.query_selector_all(selector_clues)
+                ]
+            except Exception as e:
+                print(f"Error extracting clues for selector {selector_clues}: {e}")
+            if extracted_clues:
+                clues_text = extracted_clues[0]
+                clues = [c.lstrip() for c in match_sentences(clues_text)]
+                percentages = [
+                    int(p.rstrip("%")) for p in match_percentages(clues_text)
+                ]
+                round = (answer, tuple(zip(clues, percentages)))
+                rounds.append(round)
+    return rounds
 
 
-def extract_clues(selection, round_number) -> list:
-    clues = []
-    selector = f'[data-dropdown-target="panel{round_number}"]'
-    extracted = [element.inner_text().strip() for element in selection.query_selector_all(selector)]
-    if extracted:
-        cleaned_text = re.sub(r'[\t\n]+', '', extracted[0]).strip()
-        items = cleaned_text.split("%")[0:-2]
-        for item in items:
-            question = item.split("?")[0].strip()
-            question_str = f"{question}?"
-            percent = item.split("?")[1].strip()
-            clues.append(dict(question=question_str, percent_correct=percent))
-    return clues
-
-
-def scrape(day, output_file=None):
-    """
-    Scrapes data from thrice.geekswhodrink.com for a given day using Playwright.
-
-    Parameters:
-        day (str): Date in 'YYYY-MM-DD' format, e.g., '2024-11-30'
-        output_file (str): Filename to save the scraped data (CSV format)
-
-    Returns:
-        None
-    """
-    print(f"Starting scrape with day={day} and output_file={output_file}")
-    url = f'https://thrice.geekswhodrink.com/stats?day={day}'
-    print(f"Constructed URL: {url}")
+def scrape(day, db_conn=None):
+    """Scrape data for a given day."""
+    url = f"https://thrice.geekswhodrink.com/stats?day={day}"
+    print(f"Scraping {url}")
 
     with sync_playwright() as p:
-        print("Launching Playwright...")
         browser = p.chromium.launch(headless=True)
-        context = browser.new_context()
-        
-        context.set_extra_http_headers({
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) ' +
-                          'AppleWebKit/537.36 (KHTML, like Gecko) ' +
-                          'Chrome/58.0.3029.110 Safari/537.3'
-        })
-        print("Browser context configured with user-agent.")
-
+        context = browser.new_context(
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
+        )
         page = context.new_page()
 
         try:
-            print(f'Navigating to {url}...')
-            page.goto(url, timeout=60000)  # Timeout after 60 seconds
-            print("Page loaded successfully.")
+            page.goto(url, timeout=60000)
+            page.wait_for_selector("#day-view", timeout=60000)
 
-            print("Waiting for the main content to load...")
-            page.wait_for_selector('#day-view', timeout=60000)  # Wait up to 60 seconds
-            print("Selector #day-view found.")
-
-            print("Extracting data...")
-            selection = page.query_selector('#day-view')
+            selection = page.query_selector("#day-view")
             if not selection:
-                print("Selection not found on the page.")
+                print(f"No data found for {day}")
                 return
 
             game_data = extract_game_data(selection)
-            print(game_data)
+            if not game_data:
+                print(f"No valid game data extracted for {day}")
+                return
 
-            if output_file:
-                print("Saving to file...")
+            for i, round in enumerate(game_data, 1):
+                answer, clues = round
+                print(f"Round {i}: {answer}")
+                for clue, correct in clues:
+                    print(f"{clue} {correct}%")
+
+            if db_conn:
+                insert_game_data(db_conn, day, game_data)
 
         except Exception as e:
-            print(f"An error occurred: {e}", file=sys.stderr)
+            import traceback
+
+            print(f"Error scraping {day}: {e}\n{traceback.format_exc()}")
         finally:
-            print("Closing browser...")
             browser.close()
+
 
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description='Scrape data from thrice.geekswhodrink.com')
-    parser.add_argument('--day', type=str, required=True, help="Date in 'YYYY-MM-DD' format, e.g., '2023-12-04'")
-    parser.add_argument('--output', type=str, required=False, default=None, help='Output CSV file name')
-
+    parser = argparse.ArgumentParser(
+        description="Scrape data from thrice.geekswhodrink.com"
+    )
+    parser.add_argument("--day", type=str, help="Date in 'YYYY-MM-DD' format")
+    parser.add_argument("--start", type=str, help="Start date in 'YYYY-MM-DD' format")
+    parser.add_argument("--end", type=str, help="End date in 'YYYY-MM-DD' format")
+    parser.add_argument(
+        "--db", type=str, default="thrice.db", help="SQLite database file"
+    )
+    parser.add_argument(
+        "--init-db", action="store_true", help="Initialize database schema"
+    )
     args = parser.parse_args()
 
-    scrape(day=args.day, output_file=args.output)
+    if args.init_db:
+        print(f"Initializing database schema in {args.db}")
+        init_db(args.db)
 
+    if args.day:
+        scrape(day=args.day, db_conn=args.db)
+    elif args.start and args.end:
+        start_date = date.fromisoformat(args.start)
+        end_date = date.fromisoformat(args.end)
+
+        if start_date > end_date:
+            print("Error: start date cannot be after end date")
+            exit(1)
+
+        num_days = (end_date - start_date).days
+        print(f"Scraping {num_days + 1} days from {args.start} to {args.end}")
+
+        for current_date in date_range_generator(start_date, end_date):
+            scrape(day=str(current_date), db_conn=args.db)
+    else:
+        print("Error: either --day or both --start and --end are required")

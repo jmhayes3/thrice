@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Thrice</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body
+    class="min-h-screen bg-gradient-to-br from-bg-dark to-bg-light text-white flex flex-col items-center justify-center"
+  >
+    <div class="container max-w-3xl mx-auto px-4 py-8">
+      <header class="text-center mb-8">
+        <h1 class="text-4xl md:text-5xl font-bold text-primary">Thrice</h1>
+      </header>
+
+      <main id="gameArea">
+        <div
+          id="startScreen"
+          class="screen bg-white/10 rounded-2xl p-8 mb-4 text-center"
+        >
+          <button
+            id="startButton"
+            class="btn bg-primary text-bg-dark px-6 py-3 rounded-lg text-lg font-semibold hover:bg-[#00cc6f] transform hover:-translate-y-0.5 transition-all duration-300"
+          >
+            Start
+          </button>
+        </div>
+
+        <div id="gameScreen" class="screen hidden bg-white/10 rounded-2xl">
+          <div
+            class="game-info flex justify-between items-center flex-col gap-4"
+          >
+            <div
+              class="category-info flex flex-col justify-center items-center w-full bg-amber text-center rounded-t-2xl"
+            >
+              <h2 class="bg-amber text-black text-xl font-bold px-4 py-2">
+                CATEGORY: <span id="category"></span>
+              </h2>
+            </div>
+            <div class="progress-info text-center">
+              <h3 class="text-2xl font-bold text-primary">
+                Question <span id="roundNumber">1</span>
+              </h3>
+              <h4 class="text-base font-bold">
+                FOR <span id="questionNumber">3</span> POINTS
+              </h4>
+            </div>
+          </div>
+
+          <div
+            id="message"
+            class="screen hidden rounded-2xl p-4 mb-4 text-primary text-base font-bold text-center"
+          ></div>
+
+          <div class="question-box p-4 mt-4">
+            <p id="questionText" class="question text-xl text-center mb-6">
+              Loading question...
+            </p>
+            <form id="answerForm" class="flex flex-col items-center gap-4">
+              <input
+                type="text"
+                id="answerInput"
+                placeholder="Answer here..."
+                class="w-4/5 px-4 py-3 mx-auto rounded-lg bg-white/90 text-bg-dark focus:outline-none focus:ring-2 focus:ring-primary"
+                autocomplete="off"
+              />
+              <button
+                type="submit"
+                class="btn bg-primary text-bg-dark px-6 py-3 rounded-lg font-semibold hover:bg-[#00cc6f] transform hover:-translate-y-0.5 transition-all duration-300"
+              >
+                Submit
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <div
+          id="scoreBoard"
+          class="mt-2 py-2 px-2 bg-amber text-base text-black font-base rounded-2xl"
+        >
+          <h4 class="mb-2 text-xl text-black font-bold text-center">
+            TOTAL: <span id="score">0</span> POINTS
+          </h4>
+        </div>
+
+        <div
+          id="resultsScreen"
+          class="screen hidden bg-white/10 rounded-2xl p-8 mb-4 text-center"
+        >
+          <h2 class="text-3xl font-bold text-primary mb-4">Game Over!</h2>
+          <p class="text-xl mb-6">
+            Final Score: <span id="finalScore">0</span>
+          </p>
+        </div>
+      </main>
+    </div>
+    <script src="/static/script.js"></script>
+  </body>
+</html>

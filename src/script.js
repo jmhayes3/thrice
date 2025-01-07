@@ -1,14 +1,14 @@
 class TriviaGameAPI {
   static async startGame() {
-    const response = await fetch('http://localhost:3000/api/game/start', {
-      method: 'POST'
+    const response = await fetch('/api/game/start', {
+      method: 'GET'
     });
     if (!response.ok) throw new Error('Failed to start the game');
     return await response.json();
   }
 
   static async submitAnswer(sessionId, answer) {
-    const response = await fetch('http://localhost:3000/api/game/answer', {
+    const response = await fetch('/api/game/answer', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

@@ -1,20 +1,14 @@
 {
   "name": "thrice",
-  "version": "1.0.0",
-  "description": "Thrice emulator.",
-  "main": "app.js",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
-    "test": "echo \"This is a test!\"",
-    "build:css": "npx tailwindcss -i ./frontend/src/styles.css -o ./frontend/public/styles.css"
+    "build": "npm run build:css",
+    "build:css": "npx tailwindcss -i ./src/styles.css -o ./public/static/styles.css",
+    "dev": "wrangler pages dev",
+    "deploy": "wrangler pages deploy"
   },
-  "keywords": [],
-  "author": "jmhayes3",
-  "license": "MIT",
-  "dependencies": {
-    "autoprefixer": "^10.4.20",
-    "cors": "^2.8.5",
-    "express": "^4.21.2",
-    "postcss": "^8.4.49",
+  "devDependencies": {
     "tailwindcss": "^3.4.17"
   }
 }
