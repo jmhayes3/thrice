@@ -135,12 +135,18 @@ def scrape(day, db_conn=None):
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description="Scrape data from thrice.geekswhodrink.com")
+    parser = argparse.ArgumentParser(
+        description="Scrape data from thrice.geekswhodrink.com"
+    )
     parser.add_argument("--day", type=str, help="Date in 'YYYY-MM-DD' format")
     parser.add_argument("--start", type=str, help="Start date in 'YYYY-MM-DD' format")
     parser.add_argument("--end", type=str, help="End date in 'YYYY-MM-DD' format")
-    parser.add_argument("--db", type=str, default="thrice.db", help="SQLite database file")
-    parser.add_argument("--init-db", action="store_true", help="Initialize database schema")
+    parser.add_argument(
+        "--db", type=str, default="thrice.db", help="SQLite database file"
+    )
+    parser.add_argument(
+        "--init-db", action="store_true", help="Initialize database schema"
+    )
     args = parser.parse_args()
 
     if args.init_db:
