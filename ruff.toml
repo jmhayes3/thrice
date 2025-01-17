@@ -4,16 +4,13 @@ extend-exclude = [".venv"]
 
 [lint]
 select = [
-    "E",  # pycodestyle errors
     "F",  # pyflakes
+    "E",  # pycodestyle errors
     "W",  # pycodestyle warnings
     "I",  # isort
-    "B",  # flake8-bugbear
-    "UP", # pyupgrade
     "A",  # flake8-builtins
-    "C4", # flake8-comprehensions
 ]
-ignore = ["E501"]
+# ignore = ["E501"]
 
 [format]
 docstring-code-format = true
