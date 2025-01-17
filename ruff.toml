@@ -1,5 +1,5 @@
 line-length = 120
-target-version = "py310"
+target-version = "py39"
 extend-exclude = [".venv"]
 
 [lint]
@@ -12,8 +12,6 @@ select = [
     "UP", # pyupgrade
     "A",  # flake8-builtins
     "C4", # flake8-comprehensions
-    "T20", # flake8-print
-    "PIE", # flake8-pie
 ]
 ignore = ["E501"]
 
