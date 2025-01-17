@@ -1,24 +1,24 @@
+line-length = 120
+target-version = "py310"
 extend-exclude = [".venv"]
-
-[format]
-docstring-code-format = true
 
 [lint]
 select = [
-    "A",
-    "ASYNC",
-    "B",
-    "E",
-    "F",
-    "I",
-    "PIE",
-    "RUF200",
-    "T20",
-    "UP",
-    "W",
+    "E",  # pycodestyle errors
+    "F",  # pyflakes
+    "W",  # pycodestyle warnings
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "UP", # pyupgrade
+    "A",  # flake8-builtins
+    "C4", # flake8-comprehensions
+    "T20", # flake8-print
+    "PIE", # flake8-pie
 ]
-
 ignore = ["E501"]
+
+[format]
+docstring-code-format = true
 
 [lint.isort]
 combine-as-imports = true
