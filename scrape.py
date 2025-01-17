@@ -5,7 +5,6 @@ from utils import match_percentages, match_sentences, date_range_generator
 
 
 def init_db(db_path):
-    """Initialize database with schema."""
     with open("schema.sql", "r") as f:
         schema = f.read()
 
@@ -15,7 +14,6 @@ def init_db(db_path):
 
 
 def insert_game_data(db_conn, day, game_data):
-    """Insert game data."""
     try:
         conn = sqlite3.connect(db_conn)
         cursor = conn.cursor()
@@ -55,11 +53,11 @@ def insert_game_data(db_conn, day, game_data):
 
 
 def extract_game_data(selection):
-    """Extract game data from the page."""
     rounds = []
     for i in range(5):
         selector_answer = f'[data-dropdown-index-param="{i}"]'
         extracted_answers = []
+
         try:
             extracted_answers = [
                 element.inner_text().strip()
@@ -67,10 +65,12 @@ def extract_game_data(selection):
             ]
         except Exception as e:
             print(f"Error extracting answers for selector {selector_answer}: {e}")
+
         if extracted_answers:
             answer = extracted_answers[0]
             selector_clues = f'[data-dropdown-target="panel{i}"]'
             extracted_clues = []
+
             try:
                 extracted_clues = [
                     element.inner_text().strip()
@@ -78,6 +78,7 @@ def extract_game_data(selection):
                 ]
             except Exception as e:
                 print(f"Error extracting clues for selector {selector_clues}: {e}")
+
             if extracted_clues:
                 clues_text = extracted_clues[0]
                 clues = [c.lstrip() for c in match_sentences(clues_text)]
@@ -90,7 +91,6 @@ def extract_game_data(selection):
 
 
 def scrape(day, db_conn=None):
-    """Scrape data for a given day."""
     url = f"https://thrice.geekswhodrink.com/stats?day={day}"
     print(f"Scraping {url}")
 
@@ -135,18 +135,12 @@ def scrape(day, db_conn=None):
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(
-        description="Scrape data from thrice.geekswhodrink.com"
-    )
+    parser = argparse.ArgumentParser(description="Scrape data from thrice.geekswhodrink.com")
     parser.add_argument("--day", type=str, help="Date in 'YYYY-MM-DD' format")
     parser.add_argument("--start", type=str, help="Start date in 'YYYY-MM-DD' format")
     parser.add_argument("--end", type=str, help="End date in 'YYYY-MM-DD' format")
-    parser.add_argument(
-        "--db", type=str, default="thrice.db", help="SQLite database file"
-    )
-    parser.add_argument(
-        "--init-db", action="store_true", help="Initialize database schema"
-    )
+    parser.add_argument("--db", type=str, default="thrice.db", help="SQLite database file")
+    parser.add_argument("--init-db", action="store_true", help="Initialize database schema")
     args = parser.parse_args()
 
     if args.init_db:
