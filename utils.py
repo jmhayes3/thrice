@@ -3,14 +3,14 @@ from datetime import timedelta
 
 
 def match_percentages(text):
-    """
-    Matches one or more digits preceded by whitespace and followed by a % sign.
+    """Match one or more digits preceded by whitespace and followed by '%'.
 
     Args:
-        text: Input text.
+        text: The text to search.
 
     Returns:
         A list of matching strings.
+
     """
     pattern = r"\s+(\d+%)"
     matches = re.findall(pattern, text)
@@ -18,14 +18,14 @@ def match_percentages(text):
 
 
 def match_sentences(text):
-    """
-    Matches any character (.) zero or more times (*) followed by . or ? or !
+    """Match any character zero or more times followed by '.' or '!' or '?'.
 
     Args:
-        text: Input text.
+        text: The text to search.
 
     Returns:
         A list of matching strings.
+
     """
     pattern = r".*[.?!]"
     matches = re.findall(pattern, text)
@@ -33,8 +33,7 @@ def match_sentences(text):
 
 
 def date_range_generator(start_date, end_date):
-    """
-    Generates a sequence of dates between start_date and end_date (inclusive).
+    """Generate a sequence of dates between start_date and end_date (inclusive).
 
     Args:
         start_date: The starting date (datetime.date object).
@@ -42,6 +41,7 @@ def date_range_generator(start_date, end_date):
 
     Yields:
         A date object for each day in the range.
+
     """
     current_date = start_date
     while current_date <= end_date:
