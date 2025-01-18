@@ -1,11 +1,13 @@
 import sqlite3
 from datetime import date, datetime
+
 from playwright.sync_api import sync_playwright
-from utils import match_percentages, match_sentences, date_range_generator
+
+from utils import date_range_generator, match_percentages, match_sentences
 
 
 def init_db(db_path):
-    with open("schema.sql", "r") as f:
+    with open("schema.sql") as f:
         schema = f.read()
 
     conn = sqlite3.connect(db_path)

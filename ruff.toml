@@ -1,24 +1,26 @@
-extend-exclude = [".venv"]
+line-length = 88
+indent-width = 4
+target-version = "py39"
 
 [format]
-docstring-code-format = true
+indent-style = "space"
+quote-style = "double"
+line-ending = "lf"
 
 [lint]
 select = [
-    "A",
-    "ASYNC",
-    "B",
-    "E",
-    "F",
-    "I",
-    "PIE",
-    "RUF200",
-    "T20",
-    "UP",
-    "W",
+    "F",  # pyflakes
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "UP",  # pyupgrade
+    "I",  # isort
+    "A",  # flake8-builtins
+    "B",  # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "C90",  # mccabe
+    "D",  # pydocstyle
 ]
+ignore = ["D100", "D103", "D203", "D213"]
 
-ignore = ["E501"]
-
-[lint.isort]
-combine-as-imports = true
+[lint.mccabe]
+max-complexity = 10
