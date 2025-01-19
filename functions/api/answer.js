@@ -1,6 +1,8 @@
 export async function onRequestPost(context) {
-  const requestBody = await context.request.json();
-  console.log(requestBody);
+  const { request } = context;
+
+  const requestData = await request.json()
+  console.log(requestData);
 
   const responseData = { message: "Answer submitted!", answer: 42 };
 
