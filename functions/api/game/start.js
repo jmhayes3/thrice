@@ -1,9 +1,9 @@
-import questions from "./data";
-
 const generateSessionId = () => {
   // Generate session IDs using a timestamp and random number for uniqueness
   return `session_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
 };
+
+const questions = {}
 
 const gameState = {
   // Each key is a session identifier
@@ -11,22 +11,19 @@ const gameState = {
     // Each round now contains an array of attempts
     round1: {
       attempts: [
-        { answer: 'X', timestamp: 1704321600000 },  // Example of a first attempt where answer was 0
-        { answer: 42, timestamp: 1704321660000 }    // Example of a second attempt
-      ],
-      currentAttempt: 1  // Tracks which attempt the player is currently on
+        { answer: 'X', timestamp: 1704321600000 },
+        { answer: 42, timestamp: 1704321660000 }
+      ]
     },
     round2: {
       attempts: [
         { answer: 15, timestamp: 1704321720000 }
-      ],
-      currentAttempt: 0
+      ]
     }
   },
   session2: {
     round1: {
-      attempts: [],      // No attempts made yet
-      currentAttempt: 0
+      attempts: []
     }
   }
 };
@@ -76,6 +73,7 @@ export async function onRequestPost(context) {
   console.log(requestBody);
 
   const responseData = { message: "Game started!", questions: questions };
+
   return new Response(JSON.stringify(responseData), {
     status: 200,
     headers: { 'Content-Type': 'application/json' },

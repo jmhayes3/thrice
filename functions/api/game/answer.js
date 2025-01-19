@@ -1,10 +1,9 @@
-// api/game/answer.js
-
 export async function onRequestPost(context) {
   const requestBody = await context.request.json();
+  console.log(requestBody);
 
-  // Your API logic here (e.g., process game start request)
-  const responseData = { message: "Answer submitted!", requestData: requestBody };
+  const responseData = { message: "Answer submitted!", answer: 42 };
+
   return new Response(JSON.stringify(responseData), {
     status: 200,
     headers: { 'Content-Type': 'application/json' },
