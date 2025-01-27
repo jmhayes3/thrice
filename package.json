@@ -3,13 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "build": "npm run build:css",
-    "build:css": "npx tailwindcss -i ./src/styles.css -o ./public/static/styles.css",
+    "prettier:check": "prettier --check .",
+    "prettier:fix": "prettier --write .",
     "dev": "wrangler pages dev",
     "deploy": "wrangler pages deploy"
   },
   "devDependencies": {
-    "tailwindcss": "^3.4.17",
+    "prettier": "3.4.2",
     "wrangler": "^3.103.2"
   }
 }
