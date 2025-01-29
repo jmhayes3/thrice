@@ -2,7 +2,6 @@ import sqlite3
 from datetime import date, datetime
 
 from playwright.sync_api import sync_playwright
-
 from utils import date_range_generator, match_percentages, match_sentences
 
 
@@ -61,10 +60,7 @@ def extract_game_data(selection):
         extracted_answers = []
 
         try:
-            extracted_answers = [
-                element.inner_text().strip()
-                for element in selection.query_selector_all(selector_answer)
-            ]
+            extracted_answers = [element.inner_text().strip() for element in selection.query_selector_all(selector_answer)]
         except Exception as e:
             print(f"Error extracting answers for selector {selector_answer}: {e}")
 
@@ -74,19 +70,14 @@ def extract_game_data(selection):
             extracted_clues = []
 
             try:
-                extracted_clues = [
-                    element.inner_text().strip()
-                    for element in selection.query_selector_all(selector_clues)
-                ]
+                extracted_clues = [element.inner_text().strip() for element in selection.query_selector_all(selector_clues)]
             except Exception as e:
                 print(f"Error extracting clues for selector {selector_clues}: {e}")
 
             if extracted_clues:
                 clues_text = extracted_clues[0]
                 clues = [c.lstrip() for c in match_sentences(clues_text)]
-                percentages = [
-                    int(p.rstrip("%")) for p in match_percentages(clues_text)
-                ]
+                percentages = [int(p.rstrip("%")) for p in match_percentages(clues_text)]
                 round = (answer, tuple(zip(clues, percentages)))
                 rounds.append(round)
     return rounds
@@ -137,18 +128,12 @@ def scrape(day, db_conn=None):
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(
-        description="Scrape data from thrice.geekswhodrink.com"
-    )
+    parser = argparse.ArgumentParser(description="Scrape data from thrice.geekswhodrink.com")
     parser.add_argument("--day", type=str, help="Date in 'YYYY-MM-DD' format")
     parser.add_argument("--start", type=str, help="Start date in 'YYYY-MM-DD' format")
     parser.add_argument("--end", type=str, help="End date in 'YYYY-MM-DD' format")
-    parser.add_argument(
-        "--db", type=str, default="thrice.db", help="SQLite database file"
-    )
-    parser.add_argument(
-        "--init-db", action="store_true", help="Initialize database schema"
-    )
+    parser.add_argument("--db", type=str, default="thrice.db", help="SQLite database file")
+    parser.add_argument("--init-db", action="store_true", help="Initialize database schema")
     args = parser.parse_args()
 
     if args.init_db:
