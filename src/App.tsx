@@ -16,7 +16,10 @@ function App() {
 
   return (
     <>
-      <h1>Vite + React</h1>
+      <h1>Thrice</h1>
+      <p>
+        Edit <code>src/App.tsx</code> and save to test HMR
+      </p>
       <div>
         <Button
           variant="outline"
@@ -24,9 +27,6 @@ function App() {
         >
           count is {count}
         </Button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
       </div>
       <InputWithButton />
     </>
