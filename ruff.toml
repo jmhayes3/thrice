@@ -1,4 +1,4 @@
-line-length = 88
+line-length = 150
 indent-width = 4
 target-version = "py39"
 
@@ -20,7 +20,7 @@ select = [
     "C90",  # mccabe
     "D",  # pydocstyle
 ]
-ignore = ["D100", "D103", "D203", "D213"]
+ignore = ["A001", "D100", "D103", "D203", "D213"]
 
 [lint.mccabe]
 max-complexity = 10
