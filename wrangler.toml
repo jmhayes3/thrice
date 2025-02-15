@@ -9,6 +9,3 @@ id = "f25d58f578664c1db8f55f99077bde0b"
 binding = "DB"
 database_name = "thrice_db"
 database_id = "9b780f11-6c4b-409a-9693-98e74021ef1e"
-
-[vars]
-API_KEY = "1234567asdf"
