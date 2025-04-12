@@ -61,15 +61,13 @@ export async function submitAnswer(
 
 export async function startGamePlay(
   gameId: string | number,
-  userId: string,
 ): Promise<GamePlayState> {
-  const response = await fetch(`/api/play/${gameId}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ userId }),
-  });
+  const response = await fetch(`/api/play/${gameId}`);
 
   if (!response.ok) {
+    if (response.status === 403) {
+      throw new Error("FORBIDDEN: Not authorized to start game");
+    }
     throw new Error(`Failed to start game: ${response.status}`);
   }
 
@@ -83,7 +81,10 @@ export async function getGamePlayState(
   const response = await fetch(`/api/play/${gameId}?userId=${userId}`);
 
   if (!response.ok) {
-    throw new Error(`Failed to get game state: ${response.status}`);
+    if (response.status === 403) {
+      throw new Error("FORBIDDEN: Not authorized to get game state");
+    }
+    throw new Error(`Failed to get next clue: ${response.status}`);
   }
 
   return await response.json();

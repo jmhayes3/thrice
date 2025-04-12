@@ -35,7 +35,7 @@ export function PlayGame() {
         setLoading(true);
 
         // Start game play session
-        const gamePlayData = await startGamePlay(id, userId);
+        const gamePlayData = await startGamePlay(id);
         setGameState(gamePlayData);
         setGame({
           game_id: gamePlayData.game_id,
@@ -222,7 +222,7 @@ export function PlayGame() {
             onClick={async () => {
               try {
                 setLoading(true);
-                const newGamePlayData = await startGamePlay(id, userId);
+                const newGamePlayData = await startGamePlay(id);
                 setGameState(newGamePlayData);
 
                 if (typeof newGamePlayData.current_round === "object") {
