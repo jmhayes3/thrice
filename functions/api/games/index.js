@@ -5,39 +5,48 @@ export const onRequestGet = async (context) => {
     const { searchParams } = new URL(context.request.url);
     const limit = parseInt(searchParams.get("limit") || "10");
     const offset = parseInt(searchParams.get("offset") || "0");
-    const search = searchParams.get("search");
 
     let games;
     let total;
 
-    if (search) {
-      // Use vector search if search parameter is provided
-      const results = await context.env.VECTOR_INDEX.query(search, {
-        limit,
-        offset,
-      });
+    // Regular paginated query with clues and rounds
+    const query = `
+      SELECT
+        g.*,
+        json_group_array(
+          json_object(
+            'round_id', r.round_id,
+            'round_number', r.round_number,
+            'answer', r.answer,
+            'category', r.category,
+            'clues', (
+              SELECT json_group_array(
+                json_object(
+                  'clue_id', c.clue_id,
+                  'clue_number', c.clue_number,
+                  'clue_text', c.clue_text,
+                  'percent_correct', c.percent_correct,
+                  'points', c.points
+                )
+              )
+              FROM clues c
+              WHERE c.round_id = r.round_id
+              ORDER BY c.clue_number
+            )
+          )
+        ) AS rounds
+      FROM games g
+      LEFT JOIN rounds r ON g.game_id = r.game_id
+      GROUP BY g.game_id
+      ORDER BY g.published DESC
+      LIMIT ? OFFSET ?
+    `;
+    games = await context.env.DB.prepare(query).bind(limit, offset).all();
 
-      // Fetch full game details for the matching IDs
-      const ids = results.matches.map((match) => match.id);
-      const query = `SELECT * FROM games WHERE id IN (${ids.map(() => "?").join(",")})`;
-      games = await context.env.DB.prepare(query)
-        .bind(...ids)
-        .all();
-      total = results.total;
-    } else {
-      // Regular paginated query
-      const query = `
-        SELECT * FROM games
-        ORDER BY created_at DESC
-        LIMIT ? OFFSET ?
-      `;
-      games = await context.env.DB.prepare(query).bind(limit, offset).all();
-
-      const countResult = await context.env.DB.prepare(
-        "SELECT COUNT(*) as count FROM games",
-      ).first();
-      total = countResult.count;
-    }
+    const countResult = await context.env.DB.prepare(
+      "SELECT COUNT(*) as count FROM games",
+    ).first();
+    total = countResult.count;
 
     return new Response(
       JSON.stringify({
@@ -64,12 +73,12 @@ export const onRequestGet = async (context) => {
 
 export const onRequestPost = async (context) => {
   try {
-    const { title, content } = await context.request.json();
+    const { title, published } = await context.request.json();
 
     // Validate required fields
-    if (!title || !content) {
+    if (!title || !published) {
       return new Response(
-        JSON.stringify({ error: "Title and content are required" }),
+        JSON.stringify({ error: "Title and published date are required" }),
         {
           status: 400,
           headers: { "Content-Type": "application/json" },
@@ -77,24 +86,19 @@ export const onRequestPost = async (context) => {
       );
     }
 
-    // Generate a UUID for the new game
-    const id = crypto.randomUUID();
-
     // Insert the game into the database
     const query = `
-      INSERT INTO games (id, title, content, created_at, updated_at)
-      VALUES (?, ?, ?, datetime('now'), datetime('now'))
+      INSERT INTO games (title, published, is_active)
+      VALUES (?, ?, 0)
+      RETURNING game_id
     `;
 
-    await context.env.DB.prepare(query).bind(id, title, content).run();
+    const result = await context.env.DB.prepare(query)
+      .bind(title, published)
+      .first();
+    const gameId = result.game_id;
 
-    // Add to vector index
-    await context.env.VECTOR_INDEX.upsert({
-      id,
-      content,
-    });
-
-    return new Response(JSON.stringify({ id }), {
+    return new Response(JSON.stringify({ id: gameId }), {
       status: 201,
       headers: { "Content-Type": "application/json" },
     });
