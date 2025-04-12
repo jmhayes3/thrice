@@ -3,21 +3,29 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AnswerForm } from "@/components/answer-form";
-import { getGame, getRounds, getClues, submitAnswer } from "@/lib/api";
-import type { Game, Round } from "@/lib/types";
+import {
+  submitAnswer,
+  startGamePlay,
+  getGamePlayState,
+  revealNextClue,
+  advanceToNextRound,
+} from "@/lib/api";
+import type { Game, GamePlayState, GamePlayRound } from "@/lib/types";
 
 export function PlayGame() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [game, setGame] = useState<Game | null>(null);
-  const [rounds, setRounds] = useState<Round[]>([]);
-  const [currentRound, setCurrentRound] = useState(0);
+  const [gameState, setGameState] = useState<GamePlayState | null>(null);
+  const [currentRound, setCurrentRound] = useState<GamePlayRound | null>(null);
   const [revealedClues, setRevealedClues] = useState(1);
   const [result, setResult] = useState<"correct" | "incorrect" | null>(null);
   const [score, setScore] = useState(0);
   const [gameCompleted, setGameCompleted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // Temporary user ID - in a real app, this would come from authentication
+  const userId = "user-" + Math.random().toString(36).substring(2, 9);
 
   useEffect(() => {
     async function fetchGameData() {
@@ -26,19 +34,23 @@ export function PlayGame() {
       try {
         setLoading(true);
 
-        // Fetch game details
-        const gameData = await getGame(id);
-        setGame(gameData);
+        // Start game play session
+        const gamePlayData = await startGamePlay(id, userId);
+        setGameState(gamePlayData);
+        setGame({
+          game_id: gamePlayData.game_id,
+          title: gamePlayData.title,
+          published: "",
+          is_active: 1,
+        });
 
-        // Fetch rounds for this game
-        const roundsData = await getRounds(id);
-
-        // For each round, fetch clues
-        for (const round of roundsData) {
-          round.clues = await getClues(round.round_id);
+        // Set current round data
+        if (typeof gamePlayData.current_round === "object") {
+          setCurrentRound(gamePlayData.current_round);
         }
 
-        setRounds(roundsData);
+        setScore(gamePlayData.score);
+        setRevealedClues(gamePlayData.revealed_clues || 1);
         setLoading(false);
       } catch (err) {
         setError(
@@ -50,35 +62,58 @@ export function PlayGame() {
     }
 
     fetchGameData();
-  }, [id]);
-
-  const currentRoundData = rounds[currentRound];
+  }, [id, userId]);
 
   // Reveal next clue timer
   useEffect(() => {
     if (
       loading ||
-      !currentRoundData ||
+      !currentRound ||
       revealedClues >= 3 ||
       result === "correct"
     ) {
       return;
     }
 
-    const timer = setTimeout(() => {
-      setRevealedClues((prev) => Math.min(prev + 1, 3));
+    const timer = setTimeout(async () => {
+      try {
+        if (id && currentRound) {
+          const nextClueData = await revealNextClue(
+            id,
+            userId,
+            currentRound.round_id,
+            revealedClues,
+          );
+
+          // Update the current round with the new clue
+          setCurrentRound((prev) => {
+            if (!prev) return null;
+
+            return {
+              ...prev,
+              clues: [...prev.clues, nextClueData.revealed_clue],
+            };
+          });
+
+          setRevealedClues(nextClueData.revealed_clues);
+        }
+      } catch (err) {
+        console.error("Error revealing next clue:", err);
+        // Fallback to local reveal if API call fails
+        setRevealedClues((prev) => Math.min(prev + 1, 3));
+      }
     }, 10000); // 10 seconds between clues
 
     return () => clearTimeout(timer);
-  }, [loading, currentRoundData, revealedClues, result]);
+  }, [loading, currentRound, revealedClues, result, id, userId]);
 
   async function handleSubmitAnswer(answer: string) {
-    if (!answer.trim() || !currentRoundData) return;
+    if (!answer.trim() || !currentRound) return;
 
     try {
       // Submit answer to the API
       const answerResult = await submitAnswer(
-        currentRoundData.round_id,
+        currentRound.round_id,
         answer,
         revealedClues,
       );
@@ -100,12 +135,25 @@ export function PlayGame() {
     }
   }
 
-  function handleNextRound() {
-    if (currentRound + 1 < rounds.length) {
-      setCurrentRound((prev) => prev + 1);
-      setRevealedClues(1);
-      setResult(null);
-    } else {
+  async function handleNextRound() {
+    if (!id || !currentRound) return;
+
+    try {
+      await advanceToNextRound(id, userId, currentRound.round_id);
+
+      // Fetch updated game state
+      const updatedGameState = await getGamePlayState(id, userId);
+      setGameState(updatedGameState);
+
+      if (typeof updatedGameState.current_round === "object") {
+        setCurrentRound(updatedGameState.current_round);
+        setRevealedClues(updatedGameState.revealed_clues || 1);
+        setResult(null);
+      } else if (updatedGameState.status === "completed") {
+        setGameCompleted(true);
+      }
+    } catch (err) {
+      console.error("Error advancing to next round:", err);
       setGameCompleted(true);
     }
   }
@@ -129,7 +177,7 @@ export function PlayGame() {
     );
   }
 
-  if (!game || !currentRoundData) {
+  if (!game || !currentRound) {
     return (
       <div className="text-center py-10">
         <h2 className="text-2xl font-bold mb-4">Game Not Found</h2>
@@ -156,12 +204,25 @@ export function PlayGame() {
         <p className="text-xl mb-6">Thanks for playing!</p>
         <div className="flex flex-col sm:flex-row justify-center gap-4">
           <Button
-            onClick={() => {
-              setCurrentRound(0);
-              setRevealedClues(1);
-              setResult(null);
-              setScore(0);
-              setGameCompleted(false);
+            onClick={async () => {
+              try {
+                setLoading(true);
+                const newGamePlayData = await startGamePlay(id, userId);
+                setGameState(newGamePlayData);
+
+                if (typeof newGamePlayData.current_round === "object") {
+                  setCurrentRound(newGamePlayData.current_round);
+                }
+
+                setRevealedClues(1);
+                setResult(null);
+                setScore(0);
+                setGameCompleted(false);
+                setLoading(false);
+              } catch (err) {
+                console.error("Error restarting game:", err);
+                setError("Failed to restart game");
+              }
             }}
             className="bg-green-600 hover:bg-green-700"
           >
@@ -181,7 +242,8 @@ export function PlayGame() {
         <div>
           <h1 className="text-2xl font-bold">{game.title}</h1>
           <p className="text-gray-600">
-            Round {currentRoundData.round_number} of {rounds.length}
+            Round {currentRound.round_number} of{" "}
+            {gameState?.rounds?.length || "?"}
           </p>
         </div>
         <div className="text-lg font-semibold">
@@ -192,12 +254,12 @@ export function PlayGame() {
       <Card className="p-6 mb-6">
         <div className="mb-4">
           <span className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-            {currentRoundData.category}
+            {currentRound.category}
           </span>
         </div>
 
         <div className="space-y-6 mb-6">
-          {currentRoundData.clues?.slice(0, revealedClues).map((clue) => (
+          {currentRound.clues.map((clue) => (
             <div key={clue.clue_id} className="animate-fadeIn">
               <h3 className="text-sm font-medium text-gray-500 mb-1">
                 Clue {clue.clue_number}
@@ -215,10 +277,10 @@ export function PlayGame() {
         {result === "correct" ? (
           <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded mb-4">
             <p className="font-medium">
-              Correct! The answer is {currentRoundData.answer}.
+              Correct! The answer is {currentRound.answer || "correct"}.
             </p>
             <p>
-              You earned {currentRoundData.clues?.[revealedClues - 1]?.points}{" "}
+              You earned {currentRound.clues[revealedClues - 1]?.points || 0}{" "}
               points!
             </p>
           </div>
@@ -230,10 +292,13 @@ export function PlayGame() {
 
         {result === "correct" ? (
           <Button onClick={handleNextRound} className="w-full">
-            {currentRound + 1 < rounds.length ? "Next Round" : "Finish Game"}
+            {gameState?.status !== "completed" ? "Next Round" : "Finish Game"}
           </Button>
         ) : (
-          <AnswerForm onSubmit={handleSubmitAnswer} disabled={true} />
+          <AnswerForm
+            onSubmit={handleSubmitAnswer}
+            disabled={result === "correct"}
+          />
         )}
       </Card>
 

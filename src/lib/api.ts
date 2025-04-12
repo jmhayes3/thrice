@@ -1,4 +1,9 @@
-import type { Game, Round, Clue, AnswerResult, GamePlayState, RevealClueResult } from "./types";
+import type {
+  Game,
+  AnswerResult,
+  GamePlayState,
+  RevealClueResult,
+} from "./types";
 
 export async function getGames(options?: {
   limit?: number;
@@ -31,26 +36,6 @@ export async function getGame(id: string | number): Promise<Game> {
       throw new Error("Game not found");
     }
     throw new Error(`Failed to fetch game: ${response.status}`);
-  }
-
-  return await response.json();
-}
-
-export async function getRounds(gameId: string | number): Promise<Round[]> {
-  const response = await fetch(`/api/games/${gameId}/rounds`);
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch rounds: ${response.status}`);
-  }
-
-  return await response.json();
-}
-
-export async function getClues(roundId: string | number): Promise<Clue[]> {
-  const response = await fetch(`/api/rounds/${roundId}/clues`);
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch clues: ${response.status}`);
   }
 
   return await response.json();
