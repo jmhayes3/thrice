@@ -1,47 +1,17 @@
-// import { Routes, Route } from "react-router-dom";
-//
-// import Posts from "@/components/posts";
-// import Post from "@/components/post";
-//
-// function App() {
-//   return (
-//     <Routes>
-//       <Route path="/" element={<Posts />} />
-//       <Route path="/posts/:id" element={<Post />} />
-//     </Routes>
-//   );
-// }
-//
-// export default App;
-
-// SOURCE: https://raw.githubusercontent.com/remix-run/react-router/refs/heads/dev/examples/basic/src/App.tsx
 import { Routes, Route, Outlet, Link } from "react-router-dom";
+import { Games } from "@/components/games";
+import { GameDetails } from "@/components/game-details";
+import { PlayGame } from "@/components/play-game";
 
 export default function App() {
   return (
-    <div>
-      <h1>Basic Example</h1>
-
-      <p>
-        This example demonstrates some of the core features of React Router
-        including nested <code>&lt;Route&gt;</code>s,{" "}
-        <code>&lt;Outlet&gt;</code>s, <code>&lt;Link&gt;</code>s, and using a
-        "*" route (aka "splat route") to render a "not found" page when someone
-        visits an unrecognized URL.
-      </p>
-
-      {/* Routes nest inside one another. Nested route paths build upon
-            parent route paths, and nested route elements render inside
-            parent route elements. See the note about <Outlet> below. */}
+    <div className="min-h-screen bg-gray-50">
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
-          <Route path="about" element={<About />} />
-          <Route path="dashboard" element={<Dashboard />} />
-
-          {/* Using path="*"" means "match anything", so this route
-                acts like a catch-all for URLs that we don't have explicit
-                routes for. */}
+          <Route path="games" element={<Games />} />
+          <Route path="games/:id" element={<GameDetails />} />
+          <Route path="play/:id" element={<PlayGame />} />
           <Route path="*" element={<NoMatch />} />
         </Route>
       </Routes>
@@ -51,67 +21,64 @@ export default function App() {
 
 function Layout() {
   return (
-    <div>
-      {/* A "layout route" is a good place to put markup you want to
-          share across all the pages on your site, like navigation. */}
-      <nav>
-        <ul>
-          <li>
-            <Link to="/">Home</Link>
-          </li>
-          <li>
-            <Link to="/about">About</Link>
-          </li>
-          <li>
-            <Link to="/dashboard">Dashboard</Link>
-          </li>
-          <li>
-            <Link to="/nothing-here">Nothing Here</Link>
-          </li>
-        </ul>
-      </nav>
+    <div className="flex flex-col min-h-screen">
+      <header className="bg-white shadow">
+        <div className="container mx-auto px-4 py-6">
+          <nav className="flex items-center justify-between">
+            <div className="text-2xl font-bold">Thrice</div>
+            <ul className="flex space-x-6">
+              <li>
+                <Link to="/" className="text-gray-600 hover:text-gray-900">Home</Link>
+              </li>
+              <li>
+                <Link to="/games" className="text-gray-600 hover:text-gray-900">Games</Link>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </header>
 
-      <hr />
+      <main className="flex-grow container mx-auto px-4 py-8">
+        <Outlet />
+      </main>
 
-      {/* An <Outlet> renders whatever child route is currently active,
-          so you can think about this <Outlet> as a placeholder for
-          the child routes we defined above. */}
-      <Outlet />
+      <footer className="bg-gray-100 py-6">
+        <div className="container mx-auto px-4 text-center text-gray-500">
+          © {new Date().getFullYear()} Thrice - A trivia game where you get three clues
+        </div>
+      </footer>
     </div>
   );
 }
 
 function Home() {
   return (
-    <div>
-      <h2>Home</h2>
-    </div>
-  );
-}
-
-function About() {
-  return (
-    <div>
-      <h2>About</h2>
-    </div>
-  );
-}
-
-function Dashboard() {
-  return (
-    <div>
-      <h2>Dashboard</h2>
+    <div className="text-center py-10">
+      <h1 className="text-4xl font-bold mb-6">Welcome to Thrice</h1>
+      <p className="text-xl mb-8">
+        A challenging trivia game where you get three clues to guess the answer.
+      </p>
+      <Link
+        to="/games"
+        className="inline-block bg-blue-600 text-white px-6 py-3 rounded-md font-medium hover:bg-blue-700 transition-colors"
+      >
+        Play Now
+      </Link>
     </div>
   );
 }
 
 function NoMatch() {
   return (
-    <div>
-      <h2>Nothing to see here!</h2>
-      <p>
-        <Link to="/">Go to the home page</Link>
-      </p>
+    <div className="text-center py-10">
+      <h2 className="text-2xl font-bold mb-4">Nothing to see here!</h2>
+      <p className="mb-6">The page you're looking for doesn't exist.</p>
+      <Link
+        to="/"
+        className="inline-block bg-blue-600 text-white px-5 py-2 rounded-md font-medium hover:bg-blue-700 transition-colors"
+      >
+        Go to the home page
+      </Link>
     </div>
   );
 }
