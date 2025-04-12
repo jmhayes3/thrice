@@ -15,22 +15,14 @@ export function GameDetails() {
       try {
         setLoading(true);
 
-        // In a real implementation, we would use the API client:
-        // const gameData = await getGame(id!);
-        // setGame(gameData);
-
-        // For now, we'll use mock data
-        const mockGame: Game = {
-          game_id: parseInt(id || "1"),
-          title: "Trivia Challenge #1",
-          published: "2025-04-01T00:00:00.000Z",
-          is_active: 1
-        };
-
-        setGame(mockGame);
+        // Get game details from the API
+        const gameData = await getGame(id!);
+        setGame(gameData);
         setLoading(false);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "An unknown error occurred");
+        setError(
+          err instanceof Error ? err.message : "An unknown error occurred",
+        );
         console.error("Error fetching game details:", err);
         setLoading(false);
       }
@@ -64,7 +56,9 @@ export function GameDetails() {
     return (
       <div className="text-center py-10">
         <h2 className="text-2xl font-bold mb-4">Game Not Found</h2>
-        <p className="mb-6">The game you're looking for doesn't exist or has been removed.</p>
+        <p className="mb-6">
+          The game you're looking for doesn't exist or has been removed.
+        </p>
         <Link
           to="/games"
           className="inline-block bg-blue-600 text-white px-5 py-2 rounded-md font-medium hover:bg-blue-700 transition-colors"
@@ -78,7 +72,10 @@ export function GameDetails() {
   return (
     <div>
       <div className="mb-6">
-        <Link to="/games" className="text-blue-600 hover:underline inline-flex items-center">
+        <Link
+          to="/games"
+          className="text-blue-600 hover:underline inline-flex items-center"
+        >
           ← Back to Games
         </Link>
       </div>
@@ -88,7 +85,9 @@ export function GameDetails() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           <div>
-            <h3 className="text-lg font-medium text-gray-700 mb-2">Game Details</h3>
+            <h3 className="text-lg font-medium text-gray-700 mb-2">
+              Game Details
+            </h3>
             <p className="text-gray-600">
               <span className="font-medium">Published:</span>{" "}
               {new Date(game.published).toLocaleDateString()}
@@ -112,7 +111,8 @@ export function GameDetails() {
         <div className="text-gray-700">
           <h3 className="text-xl font-semibold mb-3">About This Game</h3>
           <p className="mb-4">
-            Each round gives you three clues to guess the answer. The earlier you guess correctly, the more points you earn!
+            Each round gives you three clues to guess the answer. The earlier
+            you guess correctly, the more points you earn!
           </p>
 
           <div className="bg-blue-50 p-4 rounded-md">

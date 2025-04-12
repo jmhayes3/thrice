@@ -25,57 +25,18 @@ export function Games() {
       try {
         setLoading(true);
 
-        // In a real app, we would use the API client:
-        // const data = await getGames({
-        //   limit: pagination.limit,
-        //   offset: pagination.offset,
-        // });
-        // setGames(data.games);
-        // setPagination(data.pagination);
-
-        // For now, we'll use mock data
-        const mockGames: Game[] = [
-          {
-            game_id: 1,
-            title: "Trivia Challenge #1",
-            published: "2025-04-01T00:00:00.000Z",
-            is_active: 1
-          },
-          {
-            game_id: 2,
-            title: "Science Trivia",
-            published: "2025-04-02T00:00:00.000Z",
-            is_active: 1
-          },
-          {
-            game_id: 3,
-            title: "Movie Trivia",
-            published: "2025-04-03T00:00:00.000Z",
-            is_active: 1
-          },
-          {
-            game_id: 4,
-            title: "History Quiz",
-            published: "2025-04-04T00:00:00.000Z",
-            is_active: 0
-          },
-          {
-            game_id: 5,
-            title: "Sports Challenge",
-            published: "2025-04-05T00:00:00.000Z",
-            is_active: 1
-          }
-        ];
-
-        setGames(mockGames);
-        setPagination({
-          total: mockGames.length,
+        // Get games from the API
+        const data = await getGames({
           limit: pagination.limit,
-          offset: pagination.offset
+          offset: pagination.offset,
         });
 
+        setGames(data.games);
+        setPagination(data.pagination);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "An unknown error occurred");
+        setError(
+          err instanceof Error ? err.message : "An unknown error occurred",
+        );
         console.error("Error fetching games:", err);
       } finally {
         setLoading(false);
@@ -134,7 +95,10 @@ export function Games() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {games.map((game) => (
-            <Card key={game.game_id} className="p-6 hover:shadow-lg transition-shadow">
+            <Card
+              key={game.game_id}
+              className="p-6 hover:shadow-lg transition-shadow"
+            >
               <h2 className="text-xl font-semibold mb-2">{game.title}</h2>
               <p className="text-gray-500 mb-4">
                 {new Date(game.published).toLocaleDateString()}
@@ -163,27 +127,25 @@ export function Games() {
           <button
             onClick={handlePrevPage}
             disabled={pagination.offset === 0}
-            className={`px-4 py-2 rounded ${
-              pagination.offset === 0
+            className={`px-4 py-2 rounded ${pagination.offset === 0
                 ? "bg-gray-200 text-gray-500 cursor-not-allowed"
                 : "bg-blue-600 text-white hover:bg-blue-700"
-            }`}
+              }`}
           >
             Previous
           </button>
           <div className="text-gray-600">
             Showing {pagination.offset + 1} to{" "}
-            {Math.min(pagination.offset + pagination.limit, pagination.total)} of{" "}
-            {pagination.total} games
+            {Math.min(pagination.offset + pagination.limit, pagination.total)}{" "}
+            of {pagination.total} games
           </div>
           <button
             onClick={handleNextPage}
             disabled={pagination.offset + pagination.limit >= pagination.total}
-            className={`px-4 py-2 rounded ${
-              pagination.offset + pagination.limit >= pagination.total
+            className={`px-4 py-2 rounded ${pagination.offset + pagination.limit >= pagination.total
                 ? "bg-gray-200 text-gray-500 cursor-not-allowed"
                 : "bg-blue-600 text-white hover:bg-blue-700"
-            }`}
+              }`}
           >
             Next
           </button>

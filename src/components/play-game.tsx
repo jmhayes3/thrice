@@ -4,7 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AnswerForm } from "@/components/answer-form";
 import { getGame, getRounds, getClues, submitAnswer } from "@/lib/api";
-import type { Game, Round, Clue, AnswerResult } from "@/lib/types";
+import type { Game, Round } from "@/lib/types";
 
 export function PlayGame() {
   const { id } = useParams<{ id: string }>();
@@ -19,139 +19,26 @@ export function PlayGame() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Mock data for development - would be fetched from API
   useEffect(() => {
     async function fetchGameData() {
+      if (!id) return;
+
       try {
         setLoading(true);
 
-        // In a real implementation, fetch from API:
-        // const gameData = await getGame(id!);
-        // const roundsData = await getRounds(id!);
-        // For each round, fetch clues:
-        // for (const round of roundsData) {
-        //   round.clues = await getClues(round.round_id);
-        // }
+        // Fetch game details
+        const gameData = await getGame(id);
+        setGame(gameData);
 
-        // For now, using mock data
-        const mockGame: Game = {
-          game_id: parseInt(id || "1"),
-          title: "Trivia Challenge #1",
-          published: "2025-04-01T00:00:00.000Z",
-          is_active: 1,
-        };
+        // Fetch rounds for this game
+        const roundsData = await getRounds(id);
 
-        const mockRounds: Round[] = [
-          {
-            round_id: 1,
-            game_id: mockGame.game_id,
-            round_number: 1,
-            answer: "Mount Everest",
-            category: "Geography",
-            clues: [
-              {
-                clue_id: 1,
-                round_id: 1,
-                clue_number: 1,
-                clue_text:
-                  "It was first officially measured in 1856 and named after a British surveyor.",
-                percent_correct: 35,
-                points: 3,
-              },
-              {
-                clue_id: 2,
-                round_id: 1,
-                clue_number: 2,
-                clue_text:
-                  "It grows about 4mm higher every year due to geologic uplift.",
-                percent_correct: 60,
-                points: 2,
-              },
-              {
-                clue_id: 3,
-                round_id: 1,
-                clue_number: 3,
-                clue_text:
-                  "At 29,032 feet, it's the world's highest mountain above sea level.",
-                percent_correct: 90,
-                points: 1,
-              },
-            ],
-          },
-          {
-            round_id: 2,
-            game_id: mockGame.game_id,
-            round_number: 2,
-            answer: "William Shakespeare",
-            category: "Literature",
-            clues: [
-              {
-                clue_id: 4,
-                round_id: 2,
-                clue_number: 1,
-                clue_text:
-                  "Born in April 1564, this person lived during the Elizabethan era.",
-                percent_correct: 30,
-                points: 3,
-              },
-              {
-                clue_id: 5,
-                round_id: 2,
-                clue_number: 2,
-                clue_text: "They wrote 37 plays and 154 sonnets.",
-                percent_correct: 65,
-                points: 2,
-              },
-              {
-                clue_id: 6,
-                round_id: 2,
-                clue_number: 3,
-                clue_text:
-                  "Famous works include Hamlet, Macbeth, and Romeo and Juliet.",
-                percent_correct: 95,
-                points: 1,
-              },
-            ],
-          },
-          {
-            round_id: 3,
-            game_id: mockGame.game_id,
-            round_number: 3,
-            answer: "Python",
-            category: "Technology",
-            clues: [
-              {
-                clue_id: 7,
-                round_id: 3,
-                clue_number: 1,
-                clue_text: "Named after a British comedy group, not the snake.",
-                percent_correct: 40,
-                points: 3,
-              },
-              {
-                clue_id: 8,
-                round_id: 3,
-                clue_number: 2,
-                clue_text:
-                  "Created by Guido van Rossum and first released in 1991.",
-                percent_correct: 70,
-                points: 2,
-              },
-              {
-                clue_id: 9,
-                round_id: 3,
-                clue_number: 3,
-                clue_text:
-                  "A popular programming language known for its readability and simplicity.",
-                percent_correct: 85,
-                points: 1,
-              },
-            ],
-          },
-        ];
+        // For each round, fetch clues
+        for (const round of roundsData) {
+          round.clues = await getClues(round.round_id);
+        }
 
-        setGame(mockGame);
-        setRounds(mockRounds);
+        setRounds(roundsData);
         setLoading(false);
       } catch (err) {
         setError(
@@ -189,19 +76,19 @@ export function PlayGame() {
     if (!answer.trim() || !currentRoundData) return;
 
     try {
-      // In a real app, this would be an API call:
-      // const answerResult = await submitAnswer(
-      //   currentRoundData.round_id,
-      //   answer,
-      //   revealedClues
-      // );
+      // Submit answer to the API
+      const answerResult = await submitAnswer(
+        currentRoundData.round_id,
+        answer,
+        revealedClues,
+      );
 
-      // For demo, we'll just compare the answer directly
-      const isCorrect =
-        answer.toLowerCase() === currentRoundData.answer.toLowerCase();
-      const currentPoints = isCorrect
-        ? currentRoundData.clues?.[revealedClues - 1]?.points || 0
-        : 0;
+      // Update state based on answer result
+      const isCorrect = answerResult.correct;
+      const currentPoints =
+        isCorrect && answerResult.points !== undefined
+          ? answerResult.points
+          : 0;
 
       setResult(isCorrect ? "correct" : "incorrect");
 
@@ -346,10 +233,7 @@ export function PlayGame() {
             {currentRound + 1 < rounds.length ? "Next Round" : "Finish Game"}
           </Button>
         ) : (
-          <AnswerForm
-            onSubmit={handleSubmitAnswer}
-            disabled={result === "correct"}
-          />
+          <AnswerForm onSubmit={handleSubmitAnswer} disabled={true} />
         )}
       </Card>
 
