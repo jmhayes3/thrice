@@ -107,6 +107,10 @@ export async function revealNextClue(
   });
 
   if (!response.ok) {
+    // Handle specific error types
+    if (response.status === 403) {
+      throw new Error("FORBIDDEN: Not authorized to reveal clue");
+    }
     throw new Error(`Failed to reveal next clue: ${response.status}`);
   }
 

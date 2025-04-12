@@ -70,7 +70,8 @@ export function PlayGame() {
       loading ||
       !currentRound ||
       revealedClues >= 3 ||
-      result === "correct"
+      result === "correct" ||
+      error // Don't continue if there's an error
     ) {
       return;
     }
@@ -99,13 +100,27 @@ export function PlayGame() {
         }
       } catch (err) {
         console.error("Error revealing next clue:", err);
-        // Fallback to local reveal if API call fails
+
+        // Check if it's a 403 error
+        const errorMessage = err instanceof Error ? err.message : String(err);
+        if (
+          errorMessage.includes("FORBIDDEN") ||
+          errorMessage.includes("403")
+        ) {
+          // Set an error to stop the timer and show a message to the user
+          setError(
+            "Not authorized to continue. Please try refreshing the page.",
+          );
+          return; // Don't increment clues on authorization errors
+        }
+
+        // Only use fallback for non-auth errors
         setRevealedClues((prev) => Math.min(prev + 1, 3));
       }
     }, 10000); // 10 seconds between clues
 
     return () => clearTimeout(timer);
-  }, [loading, currentRound, revealedClues, result, id, userId]);
+  }, [loading, currentRound, revealedClues, result, id, userId, error]);
 
   async function handleSubmitAnswer(answer: string) {
     if (!answer.trim() || !currentRound) return;
