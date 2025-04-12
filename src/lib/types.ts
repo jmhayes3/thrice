@@ -29,3 +29,27 @@ export interface AnswerResult {
   message?: string;
   points?: number;
 }
+
+export interface GamePlayRound {
+  round_id: number;
+  round_number: number;
+  category: string;
+  clues: Clue[];
+}
+
+export interface GamePlayState {
+  game_id: number;
+  title: string;
+  user_id: string;
+  timestamp?: string;
+  rounds?: GamePlayRound[];
+  current_round: number | GamePlayRound;
+  revealed_clues?: number;
+  score: number;
+  status: "active" | "completed";
+}
+
+export interface RevealClueResult {
+  revealed_clue: Clue;
+  revealed_clues: number;
+}
