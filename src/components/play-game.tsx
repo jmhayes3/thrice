@@ -319,10 +319,7 @@ export function PlayGame() {
             {gameState?.status !== "completed" ? "Next Round" : "Finish Game"}
           </Button>
         ) : (
-          <AnswerForm
-            onSubmit={handleSubmitAnswer}
-            disabled={result === "correct"}
-          />
+          <AnswerForm onSubmit={handleSubmitAnswer} disabled={true} />
         )}
       </Card>
 
