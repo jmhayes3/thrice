@@ -12,7 +12,7 @@ export default function App() {
           <Route path="games" element={<Games />} />
           <Route path="games/:id" element={<GameDetails />} />
           <Route path="play/:id" element={<PlayGame />} />
-          <Route path="*" element={<NoMatch />} />
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
     </div>
@@ -28,10 +28,14 @@ function Layout() {
             <div className="text-2xl font-bold">Thrice</div>
             <ul className="flex space-x-6">
               <li>
-                <Link to="/" className="text-gray-600 hover:text-gray-900">Home</Link>
+                <Link to="/" className="text-gray-600 hover:text-gray-900">
+                  Home
+                </Link>
               </li>
               <li>
-                <Link to="/games" className="text-gray-600 hover:text-gray-900">Games</Link>
+                <Link to="/games" className="text-gray-600 hover:text-gray-900">
+                  Games
+                </Link>
               </li>
             </ul>
           </nav>
@@ -44,7 +48,8 @@ function Layout() {
 
       <footer className="bg-gray-100 py-6">
         <div className="container mx-auto px-4 text-center text-gray-500">
-          © {new Date().getFullYear()} Thrice - A trivia game where you get three clues
+          © {new Date().getFullYear()} Thrice - A trivia game where you get
+          three clues
         </div>
       </footer>
     </div>
@@ -68,16 +73,18 @@ function Home() {
   );
 }
 
-function NoMatch() {
+function NotFound() {
   return (
-    <div className="text-center py-10">
-      <h2 className="text-2xl font-bold mb-4">Nothing to see here!</h2>
-      <p className="mb-6">The page you're looking for doesn't exist.</p>
+    <div className="flex flex-col justify-center items-center h-screen text-center px-4">
+      <h1 className="text-4xl font-bold mb-4 text-red-600">404</h1>
+      <p className="text-lg text-gray-700 mb-6">
+        Oops! The page you're looking for doesn't exist.
+      </p>
       <Link
         to="/"
-        className="inline-block bg-blue-600 text-white px-5 py-2 rounded-md font-medium hover:bg-blue-700 transition-colors"
+        className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition-colors"
       >
-        Go to the home page
+        Go Home
       </Link>
     </div>
   );
