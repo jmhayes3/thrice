@@ -175,8 +175,17 @@ export function PlayGame() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="text-lg">Loading game...</div>
+      <div className="animate-pulse space-y-6">
+        <div className="h-8 bg-gray-200 rounded w-1/2 mx-auto" />
+        <div className="bg-white p-6 rounded shadow">
+          <div className="h-4 bg-gray-200 rounded mb-4 w-1/3" />
+          <div className="space-y-3">
+            <div className="h-4 bg-gray-200 rounded" />
+            <div className="h-4 bg-gray-200 rounded w-5/6" />
+            <div className="h-4 bg-gray-200 rounded w-4/6" />
+          </div>
+          <div className="mt-6 h-10 bg-blue-200 rounded" />
+        </div>
       </div>
     );
   }
