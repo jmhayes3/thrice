@@ -231,7 +231,7 @@ export function PlayGame() {
             onClick={async () => {
               try {
                 setLoading(true);
-                const newGamePlayData = await startGamePlay(id);
+                const newGamePlayData = await startGamePlay(id!);
                 setGameState(newGamePlayData);
 
                 if (typeof newGamePlayData.current_round === "object") {
@@ -301,7 +301,7 @@ export function PlayGame() {
         {result === "correct" ? (
           <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded mb-4">
             <p className="font-medium">
-              Correct! The answer is {currentRound.answer || "correct"}.
+              Correct! The answer was correctly answered!
             </p>
             <p>
               You earned {currentRound.clues[revealedClues - 1]?.points || 0}{" "}
